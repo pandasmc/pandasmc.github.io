@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PANDAS AI</title>
+    <title>두레팜 & 판다스 | 농업 폐기물에서 지속가능 에너지로</title>
+    <link rel="icon" href="./img/로고아이콘.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="icon" href="./img/로고아이콘.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Earthy Tech -->
-    <!-- Application Structure Plan: A single-page, vertical scrolling narrative guiding the user from Problem -> Solution -> Product Quality -> Impact -> Market Opportunity. This story-driven approach is more engaging than a report-like structure. It starts with the 'why' (the waste problem), presents the 'what' (our pellet solution), proves the 'how' (technical superiority), shows the 'value' (environmental/economic impact), and validates the 'opportunity' (market demand/policy). This logical flow is designed for maximum persuasion and clarity for potential clients and investors.
-    The header navigation is simplified to '회사소개' and '문의', directing users to the initial introductory section and the contact form. Key content sections ('문제', '솔루션', '기술력', '가치', '시장') are now accessible via a dedicated set of quick links immediately following the hero section, offering a clear content overview and direct navigation within the main body of the page. -->
+    <!-- Application Structure Plan: A single-page, vertical scrolling narrative guiding the user from Problem -> Business Idea -> Impact -> Market Opportunity. This story-driven approach is more engaging than a report-like structure. It starts with the 'why' (the waste problem), presents the 'what' (our business idea of pellet solution), shows the 'value' (environmental/economic impact), and validates the 'opportunity' (market demand/policy). This logical flow is designed for maximum persuasion and clarity for potential clients and investors, focusing on the vision rather than granular technical details or product comparison.
+    The header navigation is simplified to '회사소개' and '문의', directing users to the initial introductory section and the contact form. Key content sections ('문제', '사업 구상', '가치', '시장') are now accessible via a dedicated set of quick links immediately following the hero section, offering a clear content overview and direct navigation within the main body of the page. -->
     <!-- Visualization & Content Choices:
         - Problem (Mushroom Waste): Report Info(Table 1) -> Goal(Show scale of problem) -> Viz(Doughnut Chart + Animated Counters) -> Interaction(Hover tooltips) -> Justification(More intuitive & impactful than a table for showing proportions) -> Library(Chart.js, Vanilla JS).
-        - Production Process: Report Info(Section IV.A) -> Goal(Explain the process simply) -> Viz(Icon-based HTML/CSS flowchart) -> Interaction(Scroll-triggered fade-ins) -> Justification(Visual, easy-to-digest flow, avoids complex text) -> Library(HTML/Tailwind CSS).
-        - Pellet Quality: Report Info(Table 2) -> Goal(Compare product superiority) -> Viz(Interactive Radar Chart) -> Interaction(Click buttons to toggle datasets) -> Justification(Excellent for multi-variate comparison, visually compelling) -> Library(Chart.js).
+        - Business Idea (Pellet Conception): Report Info(Section II, III) -> Goal(Explain the core business idea) -> Viz(Text block with vision statement) -> Interaction(Scroll-triggered fade-ins) -> Justification(Emphasizes the strategic vision over detailed process) -> Library(HTML/Tailwind CSS).
         - Market Opportunity: Report Info(Biomass Demand & REC Policy) -> Goal(Show growing demand & policy advantage) -> Viz(Bar Chart) -> Interaction(Hover tooltips) -> Justification(Clearly shows market trend and growth) -> Library(Chart.js).
         - Overall Impact: Report Info(Section VI) -> Goal(Summarize key benefits) -> Viz(Icon-based cards with animated counters) -> Interaction(Scroll-triggered animation) -> Justification(Scannable, dynamic, highlights positive outcomes effectively) -> Library(Vanilla JS). -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
@@ -45,7 +44,6 @@
         }
         .bg-hero-pattern {
             background-color: #f8f7f4;
-            /* Updated background image with user-provided image and fallback */
             background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./img/버섯배지 이미지.png');
             background-size: cover;
             background-position: center;
@@ -88,7 +86,7 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex-shrink-0">
-                    <a href="#hero" class="text-2xl font-bold" style="color: #2C5F2D;">PANDAS AI</a>
+                    <a href="#hero" class="text-2xl font-bold" style="color: #2C5F2D;">두레팜 x 판다스</a>
                 </div>
                 <nav class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -119,7 +117,7 @@
             <div class="text-center text-white px-4">
                 <h1 class="text-4xl md:text-6xl font-black mb-4 text-balance">폐기물에서 에너지로,<br>농업의 미래를 혁신합니다.</h1>
                 <p class="text-lg md:text-xl max-w-3xl mx-auto text-balance">
-                    저희 회사는 버섯 폐배지를 고품질 바이오펠릿으로 전환하여<br>대한민국 순환 경제와 에너지 자립을 선도합니다.
+                    두레팜과 판다스는 버섯 폐배지를 고품질 바이오펠릿으로 전환하여<br>대한민국 순환 경제와 에너지 자립을 선도합니다.
                 </p>
                 <a href="#problem" class="mt-8 inline-block bg-white text-green-800 font-bold py-3 px-8 rounded-full text-lg hover:bg-gray-200 transition-colors duration-300" style="background-color: #97BC62; color: white;">
                     사업 내용 살펴보기
@@ -135,11 +133,8 @@
                     <a href="#problem" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
                         문제
                     </a>
-                    <a href="#solution" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
-                        솔루션
-                    </a>
-                    <a href="#tech" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
-                        기술력
+                    <a href="#business-concept" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
+                        사업 구상
                     </a>
                     <a href="#impact" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
                         가치
@@ -184,89 +179,28 @@
             </div>
         </section>
 
-        <section id="solution" class="py-20 md:py-32">
+        <section id="business-concept" class="py-20 md:py-32">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">저희 회사의 혁신: 폐기물을 자원으로</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">우리는 특허받은 기술을 통해 버려지던 버섯 폐배지를 발전소에서 사용하는 고효율, 친환경 바이오펠릿으로 재탄생시킵니다. 이것이 바로 순환 경제의 핵심입니다.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">두레팜의 사업 구상: 농업 폐기물을 고부가가치 에너지로</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">두레팜과 판다스는 버섯 재배 과정에서 발생하는 폐배지의 환경 문제와 농가의 부담을 해결하기 위한 혁신적인 사업 아이디어를 제시합니다. 우리는 버려지던 폐배지를 발전소에서 필요로 하는 고품질 목재 펠릿으로 전환하여 지속 가능한 순환 경제 모델을 구축하고자 합니다.</p>
                 </div>
-                <div class="relative mt-12 fade-in">
-                    <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-300 hidden md:block"></div>
-                    <div class="space-y-16">
-                        <div class="md:flex items-center md:space-x-8">
-                            <div class="md:w-1/2 md:text-right">
-                                <div class="p-6 bg-white rounded-lg shadow-lg fade-in">
-                                    <h3 class="text-2xl font-bold" style="color: #2C5F2D;">1. 수집 및 분쇄</h3>
-                                    <p class="mt-2 text-gray-600">버섯 농가에서 폐배지를 안정적으로 수거한 후, 펠릿 성형에 최적화된 3~10 메쉬 크기로 정밀하게 분쇄합니다.</p>
-                                </div>
-                            </div>
-                            <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-green-700 text-white font-bold text-xl flex-shrink-0" style="background-color: #97BC62;">1</div>
-                            <div class="md:w-1/2"></div>
-                        </div>
-                        <div class="md:flex flex-row-reverse items-center md:space-x-8 md:space-x-reverse">
-                            <div class="md:w-1/2">
-                                <div class="p-6 bg-white rounded-lg shadow-lg fade-in">
-                                    <h3 class="text-2xl font-bold" style="color: #2C5F2D;">2. 건조 및 혼합</h3>
-                                    <p class="mt-2 text-gray-600">50%에 달하는 수분 함량을 5~10% 수준으로 건조하고, 발열량과 성형성을 높이는 리그닌 등 친환경 첨가제를 혼합합니다.</p>
-                                </div>
-                            </div>
-                            <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-green-700 text-white font-bold text-xl flex-shrink-0" style="background-color: #97BC62;">2</div>
-                            <div class="md:w-1/2"></div>
-                        </div>
-                         <div class="md:flex items-center md:space-x-8">
-                            <div class="md:w-1/2 md:text-right">
-                                <div class="p-6 bg-white rounded-lg shadow-lg fade-in">
-                                    <h3 class="text-2xl font-bold" style="color: #2C5F2D;">3. 성형 (Pelletizing)</h3>
-                                    <p class="mt-2 text-gray-600">고온, 고압의 펠릿 성형기를 통해 혼합된 원료를 균일하고 밀도 높은 원통형 펠릿으로 압축합니다.</p>
-                                </div>
-                            </div>
-                            <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-green-700 text-white font-bold text-xl flex-shrink-0" style="background-color: #97BC62;">3</div>
-                            <div class="md:w-1/2"></div>
-                        </div>
-                        <div class="md:flex flex-row-reverse items-center md:space-x-8 md:space-x-reverse">
-                            <div class="md:w-1/2">
-                                <div class="p-6 bg-white rounded-lg shadow-lg fade-in">
-                                    <h3 class="text-2xl font-bold" style="color: #2C5F2D;">4. 냉각 및 포장</h3>
-                                    <p class="mt-2 text-gray-600">성형된 펠릿을 냉각하여 안정성을 확보하고, 최종 품질 검사를 거쳐 발전소 공급을 위해 포장합니다.</p>
-                                </div>
-                            </div>
-                            <div class="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-green-700 text-white font-bold text-xl flex-shrink-0" style="background-color: #97BC62;">4</div>
-                            <div class="md:w-1/2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="tech" class="py-20 md:py-32 bg-white">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">비교 불가한 품질: 저희 회사 바이오펠릿</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">우리의 바이오펠릿은 단순한 재활용 연료가 아닙니다. 발전소의 엄격한 요구조건과 한국산업표준(KS)을 뛰어넘는 고성능, 친환경 에너지원입니다.</p>
-                </div>
-                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
                     <div class="fade-in">
-                        <div class="chart-container">
-                            <canvas id="qualityChart"></canvas>
-                        </div>
-                        <div class="mt-4 text-center text-sm text-gray-500">각 항목의 점수가 바깥쪽에 가까울수록 우수함을 의미합니다.</div>
+                        <img src="./img/목재펠릿.jpg" alt="사업 구상 아이디어" class="rounded-lg shadow-lg w-full h-auto object-cover">
                     </div>
-                    <div class="space-y-6 fade-in" style="transition-delay: 200ms;">
-                        <div class="p-6 border-l-4 rounded-r-lg" style="border-color: #97BC62; background-color: #f0f4ec;">
-                            <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">높은 발열량 (4,500 kcal/kg 이상)</h3>
-                            <p class="text-gray-700">발전소 최소 요구사항(4,000 kcal/kg)을 상회하여 발전 효율을 극대화합니다.</p>
+                    <div class="flex flex-col space-y-8 fade-in" style="transition-delay: 200ms;">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2" style="color: #2C5F2D;">폐기물 문제를 해결하는 혁신적인 접근</h3>
+                            <p class="text-gray-600">매년 발생하는 막대한 양의 버섯 폐배지를 단순한 폐기물이 아닌, 잠재력 높은 바이오 에너지 자원으로 인식합니다. 이는 환경 부담을 줄이고 자원 효율성을 극대화하는 첫걸음입니다.</p>
                         </div>
-                        <div class="p-6 border-l-4 rounded-r-lg" style="border-color: #97BC62; background-color: #f0f4ec;">
-                            <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">낮은 회분 함량 (5% 이하)</h3>
-                            <p class="text-gray-700">특허 공정으로 회분을 최소화하여 발전 설비의 부식과 고장을 방지하고 유지보수 비용을 절감합니다.</p>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2" style="color: #2C5F2D;">고품질 바이오펠릿 생산을 위한 비전</h3>
+                            <p class="text-gray-600">버섯 폐배지의 특성을 활용하여, 발전소의 요구 사항을 충족하는 안정적이고 효율적인 목재 펠릿을 생산하는 것을 목표로 합니다. 이는 한국의 재생에너지 목표 달성에 기여할 것입니다.</p>
                         </div>
-                        <div class="p-6 border-l-4 rounded-r-lg" style="border-color: #97BC62; background-color: #f0f4ec;">
-                            <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">뛰어난 내구성 (97.5% 이상)</h3>
-                            <p class="text-gray-700">운송 및 보관 중 파손을 최소화하여 안정적인 연료 공급과 투입을 보장합니다.</p>
-                        </div>
-                        <div class="p-6 border-l-4 rounded-r-lg" style="border-color: #97BC62; background-color: #f0f4ec;">
-                            <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">친환경 배출 특성</h3>
-                            <p class="text-gray-700">석탄 대비 일산화탄소 및 미세먼지 배출이 현저히 낮아, 발전소의 환경 규제 준수 및 ESG 경영에 기여합니다.</p>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2" style="color: #2C5F2D;">농가와 상생하는 지속 가능한 모델</h3>
+                            <p class="text-gray-600">폐배지를 수거하여 농가의 처리 비용 부담을 덜어주고, 새로운 수익원을 제공함으로써 농업과 산업이 함께 성장하는 상생의 생태계를 구축하고자 합니다.</p>
                         </div>
                     </div>
                 </div>
@@ -277,7 +211,7 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16 fade-in">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">지속가능한 가치 창출</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">저희 회사의 사업은 환경 보호를 넘어 농가, 지역사회, 국가 경제에 실질적인 이익을 가져오는 상생의 모델입니다.</p>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">두레팜의 사업은 환경 보호를 넘어 농가, 지역사회, 국가 경제에 실질적인 이익을 가져오는 상생의 모델입니다.</p>
                 </div>
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div class="text-center p-8 bg-white rounded-lg shadow-lg fade-in">
@@ -308,7 +242,7 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16 fade-in">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">기회의 시장, 현명한 선택</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">대한민국 재생에너지 정책은 국내산 '미이용 바이오매스'에 강력한 인센티브를 제공합니다. 저희 회사의 바이오펠릿은 발전소의 RPS 의무 이행과 수익성 확보를 위한 가장 확실한 파트너입니다.</p>
+                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">대한민국 재생에너지 정책은 국내산 '미이용 바이오매스'에 강력한 인센티브를 제공합니다. 두레팜의 바이오펠릿은 발전소의 RPS 의무 이행과 수익성 확보를 위한 가장 확실한 파트너입니다.</p>
                 </div>
                 <div class="grid lg:grid-cols-5 gap-12 items-center">
                     <div class="lg:col-span-3 fade-in">
@@ -319,7 +253,7 @@
                     <div class="lg:col-span-2 space-y-6 fade-in" style="transition-delay: 200ms;">
                         <div>
                             <h3 class="text-xl font-bold" style="color: #2C5F2D;">RPS 정책의 핵심: REC 가중치</h3>
-                            <p class="text-gray-700 mt-1">정부는 2025년부터 수입 목재 펠릿의 REC 가중치를 축소하지만, 저희 회사의 펠릿과 같은 '미이용 바이오매스'는 현행 가중치를 유지합니다. 이는 압도적인 경제적 우위를 의미합니다.</p>
+                            <p class="text-gray-700 mt-1">정부는 2025년부터 수입 목재 펠릿의 REC 가중치를 축소하지만, 두레팜의 펠릿과 같은 '미이용 바이오매스'는 현행 가중치를 유지합니다. 이는 압도적인 경제적 우위를 의미합니다.</p>
                         </div>
                         <div>
                             <h3 class="text-xl font-bold" style="color: #2C5F2D;">지속가능성 인증</h3>
@@ -338,7 +272,7 @@
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12 fade-in">
                     <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">함께 만들어갈 지속가능한 미래</h2>
-                    <p class="max-w-2xl mx-auto text-lg text-gray-600 text-balance">저희 회사는 혁신적인 기술과 열정으로 더 나은 세상을 만들어갑니다.<br>사업 파트너십, 투자, 원료 공급에 대해 궁금한 점이 있으시면 언제든지 연락 주십시오.</p>
+                    <p class="max-w-2xl mx-auto text-lg text-gray-600 text-balance">두레팜과 판다스는 혁신적인 기술과 열정으로 더 나은 세상을 만들어갑니다.<br>사업 파트너십, 투자, 원료 공급에 대해 궁금한 점이 있으시면 언제든지 연락 주십시오.</p>
                 </div>
                 <div class="max-w-2xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-lg fade-in">
                     <form>
@@ -383,10 +317,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
-            // Updated to target only header navigation links
             const navLinks = document.querySelectorAll('#header .nav-link');
             const header = document.getElementById('header');
-            // Include main-content-nav for scroll observation
             const sections = document.querySelectorAll('main section');
 
             mobileMenuButton.addEventListener('click', () => {
@@ -395,14 +327,12 @@
 
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
-                    // Close mobile menu on click
                     if (mobileMenu.classList.contains('hidden') === false) {
                         mobileMenu.classList.add('hidden');
                     }
                 });
             });
 
-            // Smooth scroll for quick links
             document.querySelectorAll('.quick-link-button').forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -410,7 +340,7 @@
                     const targetElement = document.querySelector(targetId);
                     if (targetElement) {
                         window.scrollTo({
-                            top: targetElement.offsetTop - (header.offsetHeight + 20), // Adjust for fixed header and some padding
+                            top: targetElement.offsetTop - (header.offsetHeight + 20),
                             behavior: 'smooth'
                         });
                     }
@@ -427,7 +357,6 @@
                 }
 
                 let current = '';
-                // Adjust sectionTop for fixed header
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop - header.offsetHeight;
                     if (pageYOffset >= sectionTop) {
@@ -513,71 +442,7 @@
                 }
             });
 
-            const qualityData = {
-                labels: ['높은 발열량', '낮은 회분', '높은 내구성', '낮은 수분함량', '친환경성'],
-                datasets: [{
-                    label: '저희 회사 바이오펠릿',
-                    data: [5, 4.5, 5, 4.8, 5],
-                    fill: true,
-                    backgroundColor: 'rgba(44, 95, 45, 0.2)',
-                    borderColor: 'rgb(44, 95, 45)',
-                    pointBackgroundColor: 'rgb(44, 95, 45)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgb(44, 95, 45)'
-                }, {
-                    label: 'KS 산업 표준 (1등급)',
-                    data: [4.5, 5, 4.5, 4, 4],
-                    fill: true,
-                    backgroundColor: 'rgba(151, 188, 98, 0.2)',
-                    borderColor: 'rgb(151, 188, 98)',
-                    pointBackgroundColor: 'rgb(151, 188, 98)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgb(151, 188, 98)'
-                }]
-            };
-
-            new Chart(document.getElementById('qualityChart'), {
-                type: 'radar',
-                data: qualityData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    elements: {
-                        line: {
-                            borderWidth: 3
-                        }
-                    },
-                    scales: {
-                        r: {
-                            angleLines: { display: false },
-                            suggestedMin: 0,
-                            suggestedMax: 5,
-                            pointLabels: {
-                                font: {
-                                    size: 14,
-                                    family: "'Noto Sans KR', sans-serif"
-                                }
-                            },
-                             ticks: {
-                                display: false
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                font: {
-                                    size: 14,
-                                    family: "'Noto Sans KR', sans-serif"
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            // Removed qualityChart related code as the section was removed.
 
             const marketData = {
                 labels: ['2021', '2022', '2023', '2024 (예상)'],
