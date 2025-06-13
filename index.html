@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pandas AI</title>
+    <title>두레팜 & 판다스 | 농업 폐기물에서 지속가능 에너지로</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="icon" href="./img/로고아이콘.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Earthy Tech -->
-    <!-- Application Structure Plan: A single-page, vertical scrolling narrative guiding the user from Problem -> Solution -> Product Quality -> Impact -> Market Opportunity. This story-driven approach is more engaging than a report-like structure. It starts with the 'why' (the waste problem), presents the 'what' (our pellet solution), proves the 'how' (technical superiority), shows the 'value' (environmental/economic impact), and validates the 'opportunity' (market demand/policy). This logical flow is designed for maximum persuasion and clarity for potential clients and investors. -->
-    <!-- Visualization & Content Choices: 
+    <!-- Application Structure Plan: A single-page, vertical scrolling narrative guiding the user from Problem -> Solution -> Product Quality -> Impact -> Market Opportunity. This story-driven approach is more engaging than a report-like structure. It starts with the 'why' (the waste problem), presents the 'what' (our pellet solution), proves the 'how' (technical superiority), shows the 'value' (environmental/economic impact), and validates the 'opportunity' (market demand/policy). This logical flow is designed for maximum persuasion and clarity for potential clients and investors.
+    The header navigation is simplified to '회사소개' and '문의', directing users to the initial introductory section and the contact form. Key content sections ('문제', '솔루션', '기술력', '가치', '시장') are now accessible via a dedicated set of quick links immediately following the hero section, offering a clear content overview and direct navigation within the main body of the page. -->
+    <!-- Visualization & Content Choices:
         - Problem (Mushroom Waste): Report Info(Table 1) -> Goal(Show scale of problem) -> Viz(Doughnut Chart + Animated Counters) -> Interaction(Hover tooltips) -> Justification(More intuitive & impactful than a table for showing proportions) -> Library(Chart.js, Vanilla JS).
         - Production Process: Report Info(Section IV.A) -> Goal(Explain the process simply) -> Viz(Icon-based HTML/CSS flowchart) -> Interaction(Scroll-triggered fade-ins) -> Justification(Visual, easy-to-digest flow, avoids complex text) -> Library(HTML/Tailwind CSS).
         - Pellet Quality: Report Info(Table 2) -> Goal(Compare product superiority) -> Viz(Interactive Radar Chart) -> Interaction(Click buttons to toggle datasets) -> Justification(Excellent for multi-variate comparison, visually compelling) -> Library(Chart.js).
@@ -44,7 +44,8 @@
         }
         .bg-hero-pattern {
             background-color: #f8f7f4;
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1598634252028-91c91f1a58da?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            /* Updated background image with user-provided image and fallback */
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./img/버섯배지 이미지.png');
             background-size: cover;
             background-position: center;
         }
@@ -55,6 +56,19 @@
         .nav-link:hover, .nav-link.active {
             color: #97BC62;
             border-bottom-color: #97BC62;
+        }
+        .quick-link-button {
+            background-color: #f0f4ec; /* Lighter shade of the primary green theme */
+            color: #2C5F2D; /* Dark green text */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #97BC62; /* Subtle border matching accent */
+        }
+        .quick-link-button:hover {
+            background-color: #97BC62; /* Accent color on hover */
+            color: white; /* White text on accent */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
         }
         .fade-in {
             opacity: 0;
@@ -73,21 +87,17 @@
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex-shrink-0">
-                    <a href="#hero" class="text-2xl font-bold" style="color: #2C5F2D;">PANDAS AI</a>
+                    <a href="#hero" class="text-2xl font-bold" style="color: #2C5F2D;">두레팜 x 판다스</a>
                 </div>
                 <nav class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#problem" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">문제</a>
-                        <a href="#solution" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">솔루션</a>
-                        <a href="#tech" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">기술력</a>
-                        <a href="#impact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">가치</a>
-                        <a href="#market" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">시장</a>
+                        <a href="#hero" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">회사소개</a>
                         <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">문의</a>
                     </div>
                 </nav>
                 <div class="md:hidden">
                     <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-white hover:bg-gray-700 focus:outline-none">
-                        <span class="sr-only">Open main menu</span>
+                        <span class="sr-only">메인 메뉴 열기</span>
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
@@ -97,11 +107,7 @@
         </div>
         <div id="mobile-menu" class="md:hidden hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#problem" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">문제</a>
-                <a href="#solution" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">솔루션</a>
-                <a href="#tech" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">기술력</a>
-                <a href="#impact" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">가치</a>
-                <a href="#market" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">시장</a>
+                <a href="#hero" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">회사소개</a>
                 <a href="#contact" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">문의</a>
             </div>
         </div>
@@ -115,8 +121,32 @@
                     두레팜과 판다스는 버섯 폐배지를 고품질 바이오펠릿으로 전환하여<br>대한민국 순환 경제와 에너지 자립을 선도합니다.
                 </p>
                 <a href="#problem" class="mt-8 inline-block bg-white text-green-800 font-bold py-3 px-8 rounded-full text-lg hover:bg-gray-200 transition-colors duration-300" style="background-color: #97BC62; color: white;">
-                    더 알아보기
+                    사업 내용 살펴보기
                 </a>
+            </div>
+        </section>
+
+        <!-- Quick Links for Main Content Sections -->
+        <section id="main-content-nav" class="py-12 bg-gray-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center fade-in">
+                <h2 class="text-2xl md:text-3xl font-bold mb-8" style="color: #2C5F2D;">주요 사업 분야</h2>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#problem" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
+                        문제
+                    </a>
+                    <a href="#solution" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
+                        솔루션
+                    </a>
+                    <a href="#tech" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
+                        기술력
+                    </a>
+                    <a href="#impact" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
+                        가치
+                    </a>
+                    <a href="#market" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
+                        시장
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -352,22 +382,40 @@
         document.addEventListener('DOMContentLoaded', function () {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
-            const navLinks = document.querySelectorAll('.nav-link');
+            // Updated to target only header navigation links
+            const navLinks = document.querySelectorAll('#header .nav-link');
             const header = document.getElementById('header');
+            // Include main-content-nav for scroll observation
             const sections = document.querySelectorAll('main section');
 
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
-            
+
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
+                    // Close mobile menu on click
                     if (mobileMenu.classList.contains('hidden') === false) {
                         mobileMenu.classList.add('hidden');
                     }
                 });
             });
-            
+
+            // Smooth scroll for quick links
+            document.querySelectorAll('.quick-link-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - (header.offsetHeight + 20), // Adjust for fixed header and some padding
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
                     header.classList.add('h-14');
@@ -378,9 +426,10 @@
                 }
 
                 let current = '';
+                // Adjust sectionTop for fixed header
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 60) {
+                    const sectionTop = section.offsetTop - header.offsetHeight;
+                    if (pageYOffset >= sectionTop) {
                         current = section.getAttribute('id');
                     }
                 });
@@ -406,7 +455,7 @@
             }, {
                 threshold: 0.1
             });
-            
+
             document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
             document.querySelectorAll('[data-value]').forEach(el => observer.observe(el));
 
@@ -511,7 +560,7 @@
                                 }
                             },
                              ticks: {
-                                display: false 
+                                display: false
                             }
                         }
                     },
@@ -528,7 +577,7 @@
                     }
                 }
             });
-            
+
             const marketData = {
                 labels: ['2021', '2022', '2023', '2024 (예상)'],
                 datasets: [{
@@ -565,20 +614,6 @@
                              font: {
                                 size: 16,
                                 weight: 'bold'
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y.toLocaleString('ko-KR') + '만 톤';
-                                    }
-                                    return label;
-                                }
                             }
                         }
                     }
