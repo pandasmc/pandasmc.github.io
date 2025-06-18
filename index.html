@@ -1,491 +1,1563 @@
-<!DOCTYPE html>
-<html lang="ko" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>두레팜 & 판다스 | 농업 폐기물에서 지속가능 에너지로</title>
-    <link rel="icon" href="./img/로고아이콘.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Earthy Tech -->
-    <!-- Application Structure Plan: A single-page, vertical scrolling narrative guiding the user from Problem -> Business Idea -> Impact -> Market Opportunity. This story-driven approach is more engaging than a report-like structure. It starts with the 'why' (the waste problem), presents the 'what' (our business idea of pellet solution), shows the 'value' (environmental/economic impact), and validates the 'opportunity' (market demand/policy). This logical flow is designed for maximum persuasion and clarity for potential clients and investors, focusing on the vision rather than granular technical details or product comparison.
-    The header navigation is simplified to '회사소개' and '문의', directing users to the initial introductory section and the contact form. Key content sections ('문제', '사업 구상', '가치', '시장') are now accessible via a dedicated set of quick links immediately following the hero section, offering a clear content overview and direct navigation within the main body of the page. -->
-    <!-- Visualization & Content Choices:
-        - Problem (Mushroom Waste): Report Info(Table 1) -> Goal(Show scale of problem) -> Viz(Doughnut Chart + Animated Counters) -> Interaction(Hover tooltips) -> Justification(More intuitive & impactful than a table for showing proportions) -> Library(Chart.js, Vanilla JS).
-        - Business Idea (Pellet Conception): Report Info(Section II, III) -> Goal(Explain the core business idea) -> Viz(Text block with vision statement) -> Interaction(Scroll-triggered fade-ins) -> Justification(Emphasizes the strategic vision over detailed process) -> Library(HTML/Tailwind CSS).
-        - Market Opportunity: Report Info(Biomass Demand & REC Policy) -> Goal(Show growing demand & policy advantage) -> Viz(Bar Chart) -> Interaction(Hover tooltips) -> Justification(Clearly shows market trend and growth) -> Library(Chart.js).
-        - Overall Impact: Report Info(Section VI) -> Goal(Summarize key benefits) -> Viz(Icon-based cards with animated counters) -> Interaction(Scroll-triggered animation) -> Justification(Scannable, dynamic, highlights positive outcomes effectively) -> Library(Vanilla JS). -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<html>
 
-    <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #F8F7F4;
-            color: #333333;
-        }
-        .text-balance { text-wrap: balance; }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container { height: 350px; }
-        }
-        @media (min-width: 1024px) {
-            .chart-container { height: 400px; }
-        }
-        .bg-hero-pattern {
-            background-color: #f8f7f4;
-            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./img/버섯배지 이미지.png');
-            background-size: cover;
-            background-position: center;
-        }
-        .nav-link {
-            transition: color 0.3s ease, border-bottom-color 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #97BC62;
-            border-bottom-color: #97BC62;
-        }
-        .quick-link-button {
-            background-color: #f0f4ec; /* Lighter shade of the primary green theme */
-            color: #2C5F2D; /* Dark green text */
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #97BC62; /* Subtle border matching accent */
-        }
-        .quick-link-button:hover {
-            background-color: #97BC62; /* Accent color on hover */
-            color: white; /* White text on accent */
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
-</head>
-<body class="antialiased">
-
-    <header id="header" class="bg-white/80 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-md transition-all duration-300">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex-shrink-0">
-                    <a href="#hero" class="text-2xl font-bold" style="color: #2C5F2D;">두레팜 x 판다스</a>
-                </div>
-                <nav class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="#hero" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">회사소개</a>
-                        <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">문의</a>
-                    </div>
-                </nav>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-white hover:bg-gray-700 focus:outline-none">
-                        <span class="sr-only">메인 메뉴 열기</span>
-                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div id="mobile-menu" class="md:hidden hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#hero" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">회사소개</a>
-                <a href="#contact" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700">문의</a>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <section id="hero" class="h-screen flex items-center justify-center bg-hero-pattern">
-            <div class="text-center text-white px-4">
-                <h1 class="text-4xl md:text-6xl font-black mb-4 text-balance">폐기물에서 에너지로,<br>농업의 미래를 혁신합니다.</h1>
-                <p class="text-lg md:text-xl max-w-3xl mx-auto text-balance">
-                    두레팜과 판다스는 버섯 폐배지를 고품질 바이오펠릿으로 전환하여<br>대한민국 순환 경제와 에너지 자립을 선도합니다.
-                </p>
-                <a href="#problem" class="mt-8 inline-block bg-white text-green-800 font-bold py-3 px-8 rounded-full text-lg hover:bg-gray-200 transition-colors duration-300" style="background-color: #97BC62; color: white;">
-                    사업 내용 살펴보기
-                </a>
-            </div>
-        </section>
-
-        <!-- Quick Links for Main Content Sections -->
-        <section id="main-content-nav" class="py-12 bg-gray-50">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center fade-in">
-                <h2 class="text-2xl md:text-3xl font-bold mb-8" style="color: #2C5F2D;">주요 사업 분야</h2>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="#problem" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
-                        문제
-                    </a>
-                    <a href="#business-concept" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
-                        사업 구상
-                    </a>
-                    <a href="#impact" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
-                        가치
-                    </a>
-                    <a href="#market" class="quick-link-button px-6 py-3 rounded-full text-lg font-medium hover:scale-105">
-                        시장
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section id="problem" class="py-20 md:py-32 bg-white">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">골칫거리 농업 폐기물의 현실</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">매년 막대한 양의 버섯 폐배지가 버려지며 환경 문제와 농가 부담을 야기하고 있습니다. 이는 단순한 폐기물 문제를 넘어, 활용되지 못한 거대한 자원의 기회입니다.</p>
-                </div>
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div class="fade-in">
-                        <div class="chart-container">
-                            <canvas id="wasteChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="flex flex-col space-y-8 fade-in" style="transition-delay: 200ms;">
-                        <div>
-                            <p class="text-5xl font-extrabold" style="color: #2C5F2D;"><span data-value="800000">0</span>톤</p>
-                            <p class="text-xl text-gray-700 font-medium">연간 총 버섯 폐배지 발생량</p>
-                            <p class="text-gray-500 mt-1">국내 농업 환경에 심각한 부담을 주고 있는 규모입니다.</p>
-                        </div>
-                        <div>
-                            <p class="text-5xl font-extrabold" style="color: #2C5F2D;"><span data-value="175000">0</span>원</p>
-                            <p class="text-xl text-gray-700 font-medium">농가 폐기물 처리 비용 (톤당)</p>
-                            <p class="text-gray-500 mt-1">농가의 수익성을 저해하는 주된 요인 중 하나입니다.</p>
-                        </div>
-                         <div>
-                            <p class="text-5xl font-extrabold" style="color: #2C5F2D;"><span data-value="664000">0</span>톤 이상</p>
-                            <p class="text-xl text-gray-700 font-medium">연간 미활용 및 폐기되는 양</p>
-                            <p class="text-gray-500 mt-1">막대한 잠재적 가치가 매년 사라지고 있습니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="business-concept" class="py-20 md:py-32">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">두레팜의 사업 구상: 농업 폐기물을 고부가가치 에너지로</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">두레팜과 판다스는 버섯 재배 과정에서 발생하는 폐배지의 환경 문제와 농가의 부담을 해결하기 위한 혁신적인 사업 아이디어를 제시합니다. 우리는 버려지던 폐배지를 발전소에서 필요로 하는 고품질 목재 펠릿으로 전환하여 지속 가능한 순환 경제 모델을 구축하고자 합니다.</p>
-                </div>
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div class="fade-in">
-                        <img src="./img/목재펠릿.jpg" alt="사업 구상 아이디어" class="rounded-lg shadow-lg w-full h-auto object-cover">
-                    </div>
-                    <div class="flex flex-col space-y-8 fade-in" style="transition-delay: 200ms;">
-                        <div>
-                            <h3 class="text-2xl font-bold mb-2" style="color: #2C5F2D;">폐기물 문제를 해결하는 혁신적인 접근</h3>
-                            <p class="text-gray-600">매년 발생하는 막대한 양의 버섯 폐배지를 단순한 폐기물이 아닌, 잠재력 높은 바이오 에너지 자원으로 인식합니다. 이는 환경 부담을 줄이고 자원 효율성을 극대화하는 첫걸음입니다.</p>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold mb-2" style="color: #2C5F2D;">고품질 바이오펠릿 생산을 위한 비전</h3>
-                            <p class="text-gray-600">버섯 폐배지의 특성을 활용하여, 발전소의 요구 사항을 충족하는 안정적이고 효율적인 목재 펠릿을 생산하는 것을 목표로 합니다. 이는 한국의 재생에너지 목표 달성에 기여할 것입니다.</p>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold mb-2" style="color: #2C5F2D;">농가와 상생하는 지속 가능한 모델</h3>
-                            <p class="text-gray-600">폐배지를 수거하여 농가의 처리 비용 부담을 덜어주고, 새로운 수익원을 제공함으로써 농업과 산업이 함께 성장하는 상생의 생태계를 구축하고자 합니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="impact" class="py-20 md:py-32">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">지속가능한 가치 창출</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">두레팜의 사업은 환경 보호를 넘어 농가, 지역사회, 국가 경제에 실질적인 이익을 가져오는 상생의 모델입니다.</p>
-                </div>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="text-center p-8 bg-white rounded-lg shadow-lg fade-in">
-                        <div class="text-5xl mb-4" style="color: #97BC62;">🌍</div>
-                        <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">환경 보호</h3>
-                        <p class="text-gray-600">폐기물 매립/소각으로 인한 토양·대기오염 방지 및 탄소 배출 저감</p>
-                    </div>
-                    <div class="text-center p-8 bg-white rounded-lg shadow-lg fade-in" style="transition-delay: 150ms;">
-                        <div class="text-5xl mb-4" style="color: #97BC62;">👨‍🌾</div>
-                        <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">농가 소득 증대</h3>
-                        <p class="text-gray-600">폐기물 처리 비용 절감 및 폐배지 판매를 통한 새로운 수익원 창출</p>
-                    </div>
-                    <div class="text-center p-8 bg-white rounded-lg shadow-lg fade-in" style="transition-delay: 300ms;">
-                        <div class="text-5xl mb-4" style="color: #97BC62;">⚡️</div>
-                        <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">에너지 안보 강화</h3>
-                        <p class="text-gray-600">연간 7천억 원에 달하는 수입 펠릿을 대체하고, 국내 에너지 자급률 향상</p>
-                    </div>
-                    <div class="text-center p-8 bg-white rounded-lg shadow-lg fade-in" style="transition-delay: 450ms;">
-                        <div class="text-5xl mb-4" style="color: #97BC62;">🤝</div>
-                        <h3 class="text-xl font-bold mb-2" style="color: #2C5F2D;">지역 경제 활성화</h3>
-                        <p class="text-gray-600">생산 시설 운영을 통한 농촌 지역의 안정적인 일자리 창출</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="market" class="py-20 md:py-32 bg-white">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">기회의 시장, 현명한 선택</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600 text-balance">대한민국 재생에너지 정책은 국내산 '미이용 바이오매스'에 강력한 인센티브를 제공합니다. 두레팜의 바이오펠릿은 발전소의 RPS 의무 이행과 수익성 확보를 위한 가장 확실한 파트너입니다.</p>
-                </div>
-                <div class="grid lg:grid-cols-5 gap-12 items-center">
-                    <div class="lg:col-span-3 fade-in">
-                        <div class="bg-gray-100 p-6 rounded-lg">
-                            <canvas id="marketChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-2 space-y-6 fade-in" style="transition-delay: 200ms;">
-                        <div>
-                            <h3 class="text-xl font-bold" style="color: #2C5F2D;">RPS 정책의 핵심: REC 가중치</h3>
-                            <p class="text-gray-700 mt-1">정부는 2025년부터 수입 목재 펠릿의 REC 가중치를 축소하지만, 두레팜의 펠릿과 같은 '미이용 바이오매스'는 현행 가중치를 유지합니다. 이는 압도적인 경제적 우위를 의미합니다.</p>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold" style="color: #2C5F2D;">지속가능성 인증</h3>
-                            <p class="text-gray-700 mt-1">ISCC, ISO 9001/14001 등 국제 표준 인증 획득을 통해 제품의 신뢰성과 글로벌 기준 준수를 증명하여 발전소의 ESG 경영에 기여합니다.</p>
-                        </div>
-                         <div>
-                            <h3 class="text-xl font-bold" style="color: #2C5F2D;">안정적인 국내 공급망</h3>
-                            <p class="text-gray-700 mt-1">국제 정세나 환율 변동에 영향을 받지 않는 안정적인 국내 생산 및 공급 체계를 통해 예측 가능한 파트너십을 제공합니다.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="py-20 md:py-32">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12 fade-in">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: #2C5F2D;">함께 만들어갈 지속가능한 미래</h2>
-                    <p class="max-w-2xl mx-auto text-lg text-gray-600 text-balance">두레팜과 판다스는 혁신적인 기술과 열정으로 더 나은 세상을 만들어갑니다.<br>사업 파트너십, 투자, 원료 공급에 대해 궁금한 점이 있으시면 언제든지 연락 주십시오.</p>
-                </div>
-                <div class="max-w-2xl mx-auto bg-white p-8 sm:p-12 rounded-lg shadow-lg fade-in">
-                    <form>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">이름</label>
-                                <input type="text" name="name" id="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
-                            </div>
-                            <div>
-                                <label for="company" class="block text-sm font-medium text-gray-700">회사명</label>
-                                <input type="text" name="company" id="company" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label for="email" class="block text-sm font-medium text-gray-700">이메일</label>
-                                <input type="email" name="email" id="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label for="message" class="block text-sm font-medium text-gray-700">문의 내용</label>
-                                <textarea id="message" name="message" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></textarea>
-                            </div>
-                        </div>
-                        <div class="mt-6 text-right">
-                            <button type="submit" class="inline-flex justify-center py-3 px-8 border border-transparent shadow-sm text-base font-medium rounded-md text-white hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors" style="background-color: #2C5F2D;">
-                                문의하기
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-gray-800 text-white">
-        <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center">
-            <p>(주)판다스 | 대표: 황진경</p>
-            <p class="text-sm text-gray-400 mt-2">자연과 함께 건강한 가치를 전하는 농장, 두레팜</p>
-            <p class="text-xs text-gray-500 mt-4">&copy; 2024 Durefarm & Pandas Inc. All Rights Reserved.</p>
-        </div>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const navLinks = document.querySelectorAll('#header .nav-link');
-            const header = document.getElementById('header');
-            const sections = document.querySelectorAll('main section');
-
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    if (mobileMenu.classList.contains('hidden') === false) {
-                        mobileMenu.classList.add('hidden');
-                    }
-                });
-            });
-
-            document.querySelectorAll('.quick-link-button').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - (header.offsetHeight + 20),
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    header.classList.add('h-14');
-                    header.classList.remove('h-16');
-                } else {
-                    header.classList.add('h-16');
-                    header.classList.remove('h-14');
-                }
-
-                let current = '';
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop - header.offsetHeight;
-                    if (pageYOffset >= sectionTop) {
-                        current = section.getAttribute('id');
-                    }
-                });
-
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').substring(1) === current) {
-                        link.classList.add('active');
-                    }
-                });
-            });
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        if (entry.target.hasAttribute('data-value')) {
-                            animateValue(entry.target, 0, entry.target.dataset.value, 1500);
-                        }
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1
-            });
-
-            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-            document.querySelectorAll('[data-value]').forEach(el => observer.observe(el));
-
-
-            function animateValue(obj, start, end, duration) {
-                let startTimestamp = null;
-                end = parseInt(end);
-                const step = (timestamp) => {
-                    if (!startTimestamp) startTimestamp = timestamp;
-                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                    obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('ko-KR');
-                    if (progress < 1) {
-                        window.requestAnimationFrame(step);
-                    }
-                };
-                window.requestAnimationFrame(step);
-            }
-
-            const wasteData = {
-                labels: ['재활용 (16.9%)', '미활용/폐기 (83.1%)'],
-                datasets: [{
-                    data: [16.9, 83.1],
-                    backgroundColor: ['#97BC62', '#E5E7EB'],
-                    borderColor: ['#FFFFFF', '#FFFFFF'],
-                    borderWidth: 4,
-                    hoverOffset: 4
-                }]
-            };
-
-            new Chart(document.getElementById('wasteChart'), {
-                type: 'doughnut',
-                data: wasteData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                font: {
-                                    size: 14,
-                                    family: "'Noto Sans KR', sans-serif"
-                                }
-                            }
-                        },
-                        tooltip: {
-                            titleFont: { size: 16 },
-                            bodyFont: { size: 14 },
-                            padding: 10
-                        }
-                    }
-                }
-            });
-
-            // Removed qualityChart related code as the section was removed.
-
-            const marketData = {
-                labels: ['2021', '2022', '2023', '2024 (예상)'],
-                datasets: [{
-                    label: '목재 펠릿 수입량 (만 톤)',
-                    data: [350, 365, 373, 400],
-                    backgroundColor: '#97BC62',
-                    borderColor: '#2C5F2D',
-                    borderWidth: 1
-                }]
-            };
-
-            new Chart(document.getElementById('marketChart'), {
-                type: 'bar',
-                data: marketData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: '수입량 (만 톤)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: '국내 발전용 목재 펠릿 수입량 추이',
-                             font: {
-                                size: 16,
-                                weight: 'bold'
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-</body>
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	    <link rel="shortcut icon" href="#">
+	
+	    <style>
+	        header .hd_top {width: 100%;background: #244b6d;position: relative;height: 50px;margin-bottom: 5px;}
+	        p {text-align: center;position: relative;top: 50%;-ms-transform: translateY(-50%);-webkit-transform: translateY(-50%);transform: translateY(-50%);color: #ffffff;font-size: 20px;}
+	        div.left {text-align: center;width: 10%;float: left;box-sizing: border-box;background: #ffffff;}
+	        div.right {width: 90%;float: right;box-sizing: border-box;background: #ffffff;padding-left: 10px;}
+	        div.olControlScaleLine>div {color: white;border-color: white;border-width: medium;}
+	        .attribution {color: black;margin: 0px 10px -25px 0px;font-size: 12px;font-weight: bold;text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;text-align: right;}
+	        .menu {padding-top: 5px;padding-bottom: 5px;}
+	        .menu:hover {background-color: #7E7EB3;color: white;}
+	        .lbutton{border-top-left-radius: 5px;border-bottom-left-radius: 5px;}
+			.button {margin-left:-4px;}
+			.rbutton{border-top-right-radius: 5px;border-bottom-right-radius: 5px;margin-left:-4px;}
+	        #buttonGroup button{border: 1px solid #7E7EB3;background-color: #ffffff;color: #000000;padding: 5px;}
+	        #buttonGroup button:hover{color:white;background-color: #7E7EB3;}
+	        textarea.pop {width: 100%;height: 200px;padding: 10px;box-sizing: border-box;border: solid 2px #1E90FF;border-radius: 5px;font-size: 16px;resize: both;}
+	    </style>
+	
+	    <title>팜맵</title>
+	
+	    <script src="https://agis.epis.or.kr/ASD/pub2/js/jquery-3.4.1.js"></script>
+		<script src="https://agis.epis.or.kr/ASD/js/lib/openlayers/OpenLayers.js"></script>
+		<script src="https://agis.epis.or.kr/ASD/js/lib/proj4js/proj4.js"></script>
+		
+		<!------------------------------------------------------------------------------ 
+			apiKey : 팜맵API Key 입력
+			domain : 팜맵API Key 발급시 입력한 domain 입력
+		-------------------------------------------------------------------------------->
+		<script src="https://agis.epis.or.kr/ASD/farmmapApi/farmapApi.do?apiKey=8WjJtL79Zr8qfo0usBdg&domain=https://pandasmc.github.io"></script>
+	
+	    <script>
+	        var map1;
+	        var mapBounds = new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34);
+	        var mapMinZoom = 7;
+	        var mapMaxZoom = 20;
+	        var xyString;
+	        var reqUrl;
+	
+	        function init() {
+	            map1 = farmmapObj.init("mapDiv1");
+	            reqUrl = farmmapObj.rootUri;
+	            
+	            addSearchFarmmapDataEvent();
+	            
+	            addMoveendEvent();
+	            
+	            getButton('menuMapMgr,btnMapMgr');
+	
+	            var emapApiKey = '04trYP9_xwLAfALjwZ-B8g';
+	            var korean_map_tile = 'https://map.ngii.go.kr/openapi/Gettile.do?';
+	            var emapLayer = new OpenLayers.Layer.XYZ("2D", "", {
+	                url: korean_map_tile,
+	                layer: "2D",
+	                matrixSet: "korean",
+	                format: "image/png",
+	                style: "korean",
+	                transitionEffect: 'resize',
+	                serverResolutions: farmmapObj.oResolutions,
+	                opacity: 1,
+	                tileSize: new OpenLayers.Size(256, 256),
+	                tileOrigin: new OpenLayers.LonLat(-200000.000000000, 4000000.000000000),
+	                maxExtent: new OpenLayers.Bounds(-200000.000000000, 997738.410700000, 2802261.589000000, 4000000.000000000),
+	                transparent: true,
+	                getURL: function(bounds) {
+	                    var res = this.getServerResolution();
+	                    var x = Math.round((bounds.left - this.maxExtent.left) /
+	                        (res * this.tileSize.w));
+	                    var y = Math.round((this.maxExtent.top - bounds.top) /
+	                        (res * this.tileSize.h));
+	                    var z = this.getServerZoom() + 5;
+	                    if (x >= 0 && y >= 0) {
+	                        return this.options.url + "?service=" + "WMTS" +
+	                            "&request=" + "GetTile" + "&version=" + "1.0.0" +
+	                            "&layer=" + "korean_map" + "&style=" + this.style +
+	                            "&format=" + this.format + "&tilematrixset=" +
+	                            this.matrixSet + "&tilematrix=L" + z +
+	                            "&tilerow=" + y + "&tilecol=" + x + "&apiKey=" +
+	                            emapApiKey + "&baseUrl=" + korean_map_tile;
+	                    } else {
+	                        return "../images/nodata.png";
+	                    }
+	                },
+	                isBaseLayer: false,
+	                visibility: false
+	            });
+	            emapLayer.setZIndex(400);
+	            map1.addLayer(emapLayer);
+	        }
+	        
+	        function addMoveendEvent() {
+	            farmmapObj.addEvent("moveend", map1, moveendEventCallback);
+	            moveendEventCallback();
+	        }
+	
+	        function moveendEventCallback(e) {
+	            var params = {
+	                "lon": map1.getCenter().lon,
+	                "lat": map1.getCenter().lat
+	            };
+	            farmmapObj.searchBjdFromPoint(params);
+	            $("#zoom").text(map1.getZoom());
+	        }
+	
+	        function searchJusoWhenMovedMapCallback(result) {
+	            $("#whereis").text(result.data.juso);
+	        }
+	
+	        function addMapEvent() {
+	            farmmapObj.addEvent("mouseover", map1, mapEventCallback);
+	            farmmapObj.addEvent("mouseout", map1, mapEventCallback);
+	        }
+	
+	        function mapEventCallback(e) {
+	            if (e.type == "mouseover") {
+	                alert("===== mouse over =====");
+	            } else if (e.type == "mouseout") {
+	                alert("***** mouse out *****");
+	            } else if (e.type == "updatesize") {
+	                alert("##### updatesize #####");
+	            }
+	        }
+	
+	        function removeMoveendEvent() {
+	            farmmapObj.removeEvent("moveend", map1);
+	            $("#whereis").text("");
+	            $("#zoom").text("");
+	        }
+	
+	        function removeMapEvent() {
+	            farmmapObj.removeEvent("mouseover", map1);
+	            farmmapObj.removeEvent("mouseout", map1);
+	        }
+	
+	        function addControl() {
+	            farmmapObj.addControl("scaleLine", map1);
+	            farmmapObj.addControl("panZoomBar", map1);
+	            farmmapObj.addControl("layerSwitcher", map1);
+	        }
+	
+	        function removeControl() {
+	            farmmapObj.removeControl("scaleLine", map1);
+	            farmmapObj.removeControl("panZoomBar", map1);
+	            farmmapObj.removeControl("layerSwitcher", map1);
+	        }
+	
+	        function getObject() {
+	            var layer = farmmapObj.getObject("layer", "팜맵", map1);
+	            if (layer != null) {
+	                alert("**** 팜맵 레이어가 있습니다. ****");
+	            } else {
+	                alert("팜맵 레이어가 없습니다.\n팜맵레이어 API -> 팜맵레이어를 먼저 추가하십시요.");
+	            }
+	        }
+	
+	        function clearMap() {
+	            farmmapObj.clearMap(map1);
+	            
+	            $("#info").val("");
+	        }
+	
+	        function addcctv() {
+				var layer = farmmapObj.getObject("layer", "vworld_cctv", map1);
+				if(layer != null) {
+					farmmapObj.removeLayer("vworld_cctv", map1);
+				} else {
+					/*------------------------------------------------------------------------------ 
+						vworld apiKey : vworld에서 발급한 apiKey
+						vworld domain : vworld에서 apiKey발급시 입력한 domain
+					-------------------------------------------------------------------------------*/
+					var layerName = "vworld_cctv";
+					var url = "http://api.vworld.kr/req/wms?";
+					var layerObj = {
+										layers: "lt_p_utiscctv",
+										styles: "lt_p_utiscctv",
+					                    apiKey: "vworld apiKey",
+					                    domain: "vworld domain"
+					}
+					farmmapObj.addWMSLayer(layerName, url, layerObj, map1);
+				}
+			}
+	
+	        function addMarkerLayer() {
+	            var layer = farmmapObj.getObject("layer", "markerLayer", map1);
+	            if (layer != null) {
+	                farmmapObj.removeLayer("markerLayer", map1);
+	            } else {
+	                var layerName = "markerLayer";
+	                farmmapObj.addMarkerLayer(layerName, map1);
+	            }
+	        }
+	
+	        function addVectorLayer() {
+	            var layer = farmmapObj.getObject("layer", "vectorLayer", map1);
+	            if (layer != null) {
+	                farmmapObj.removeLayer("vectorLayer", map1);
+	            } else {
+	                var layerName = "vectorLayer";
+	                var layerOption = {
+	                    defaultStyle: {
+	                        fillColor: "#ff0000",
+	                        pointRadius: 10,
+	                        strokeWidth: 4,
+	                        strokeColor: "#ffffff",
+	                        fontColor: "yellow",
+	                        fontSize: "12px",
+	                        fontWeight: "bold",
+	                        labelYOffset: -25,
+	                        labelOutlineColor: "black",
+	                        labelOutlineWidth: 10,
+	                        labelOutlineOpacity: 1
+	                    },
+	                    selectStyle: {
+	                        fillColor: "#ffffff",
+	                        pointRadius: 10,
+	                        strokeWidth: 4,
+	                        strokeColor: "#ff0000",
+	                        fontColor: "#ffffff",
+	                        fontSize: "12px",
+	                        fontWeight: "bold",
+	                        labelYOffset: -25,
+	                        labelOutlineColor: "black",
+	                        labelOutlineWidth: 10,
+	                        labelOutlineOpacity: 1
+	                    },
+	                    hover: false,
+	                    multiple: false,
+	                    toggle: true,
+	                    onSelect: vectorSelect,
+	                    onUnselect: vectorUnselect
+	                }
+	                farmmapObj.addVectorLayer(layerName, layerOption, map1);
+	            }
+	        }
+	
+	        function activateVectorLayerEvent() {
+	            var stat = farmmapObj.activateVectorLayerEvent("vectorLayer", map1);
+	            alert(stat);
+	        }
+	
+	        function deactivateVectorLayerEvent() {
+	            var stat = farmmapObj.deactivateVectorLayerEvent("vectorLayer", map1);
+	            alert(stat);
+	        }
+	
+	        function layerShowHide() {
+	            var layer = farmmapObj.getObject("layer", "팜맵", map1);
+	            if (layer != null && layer.getVisibility()) {
+	                farmmapObj.hideLayer("팜맵", map1);
+	                setTimeout(function() {
+	                    alert("팜맵레이어 숨김");
+	                }, 300);
+	            } else if (layer != null && !layer.getVisibility()) {
+	                farmmapObj.showLayer("팜맵", map1);
+	                setTimeout(function() {
+	                    alert("팜맵레이어 보기");
+	                }, 300);
+	            } else {
+	                alert("팜맵레이어를 먼저 추가하십시요.");
+	            }
+	        }
+	
+	        function getLayerNameList() {
+	            var layerNames = farmmapObj.getLayerNameList(map1);
+	            alert(layerNames);
+	        }
+	
+	        function addFarmmapLayer() {
+	        	var layer = farmmapObj.getObject("layer", "팜맵W", map1);
+	        	if (layer != null) {
+	                farmmapObj.removeLayer("팜맵W", map1);
+	            }
+	        	
+	            layer = farmmapObj.getObject("layer", "팜맵", map1);
+	            if (layer != null) {
+	                farmmapObj.removeLayer("팜맵", map1);
+	            } else {
+	                farmmapObj.addFarmmapLayer("팜맵", map1);
+	            }
+	        }
+	        
+	        function addWhiteFarmmapLayer() {
+	        	var layer = farmmapObj.getObject("layer", "팜맵", map1);
+	        	if (layer != null) {
+	                farmmapObj.removeLayer("팜맵", map1);
+	            }
+	        	
+	            layer = farmmapObj.getObject("layer", "팜맵W", map1);
+	            if (layer != null) {
+	                farmmapObj.removeLayer("팜맵W", map1);
+	            } else {
+	                farmmapObj.addWhiteFarmmapLayer("팜맵W", map1);
+	            }
+	        }
+	
+	        function addBasicInfomapLayer() {
+	            var layer = farmmapObj.getObject("layer", "국토정보기본도", map1);
+	            if (layer != null) {
+	                farmmapObj.removeLayer("국토정보기본도", map1);
+	            } else {
+	                farmmapObj.addBasicInfomapLayer("국토정보기본도", map1);
+	            }
+	        }
+	
+	        function searchCallback(data) {
+	            var keys = Object.keys(data);
+	            var text = "";
+	            for (var i = 0; i < keys.length; i++) {
+	                var searchData = data[keys[i]];
+	                text += keys[i] + " : " + JSON.stringify(searchData) + "\r\n\r\n";
+	            }
+	
+	            $("#info").val(text);
+	        }
+	
+	        function addSearchFarmmapDataEvent() {
+	            farmmapObj.addSearchFarmmapDataEvent(map1, "searchCallback", "v2");
+	        }
+	
+	        function removeSearchFarmmapDataEvent() {
+	            farmmapObj.removeSearchFarmmapDataEvent(map1);
+	        }
+	
+	        function getLegendImage() {
+	            var mapType = "farmmap";
+	            var option = "h";
+	
+	            var name = "팜맵";
+	
+	            $("#legendDiv").hide();
+	            $("#legendImageLabel").text(name);
+	            var url = farmmapObj.getLegendImage(mapType, option);
+	            if (url != "") {
+	                $("#legendImage").attr("src",
+	                    farmmapObj.getLegendImage(mapType, option));
+	                $("#legendDiv").show();
+	            }
+	        }
+	
+	        function addMarker() {
+	            var markerLayerName = 'markerLayer';
+	
+	            var layer = farmmapObj.getObject("layer", markerLayerName, map1);
+	            if (layer == null) {
+	            	alert("마커레이어를 추가하십시요.");
+	            	return false;
+	            }
+	            
+	            var markerOptions = {
+	                id: 'marker1',
+	                iconSizeWidth: 50,
+	                iconSizeHeight: 70,
+	                iconUrl: reqUrl + 'images/marker/marker1.png',
+	                x: 982600.46915681,
+	                y: 1832833.4243186,
+	                clickFunc: markerClick,
+	                data: {
+	                    id: 'marker1',
+	                    iconSize: '50/70',
+	                    xy: '982600.46915681/1832833.4243186'
+	                }
+	            }
+	
+	            farmmapObj.addMarker(markerLayerName, markerOptions, map1);
+	
+	            markerOptions = {
+	                id: 'marker2',
+	                iconSizeWidth: 70,
+	                iconSizeHeight: 70,
+	                iconUrl: reqUrl + 'images/marker/marker2.png',
+	                x: 982709.00765681,
+	                y: 1832877.1211186,
+	                opacity: 1,
+	                clickFunc: markerClick,
+	                data: {
+	                    id: 'marker2',
+	                    iconSize: '70/70',
+	                    xy: '982709.00765681/1832877.1211186'
+	                }
+	            }
+	
+	            farmmapObj.addMarker(markerLayerName, markerOptions, map1);
+	
+	            markerOptions = {
+	                id: 'marker3',
+	                iconSizeWidth: 70,
+	                iconSizeHeight: 70,
+	                iconUrl: reqUrl + 'images/marker/marker3.png',
+	                x: 14171781.26262,
+	                y: 4368702.6029289,
+	                epsg: "EPSG:3857",
+	                opacity: 1,
+	                clickFunc: markerClick,
+	                data: {
+	                    id: 'marker3',
+	                    iconSize: '70/70',
+	                    xy: '14171781.26262/4368702.6029289',
+	                    epsg: "EPSG:3857"
+	                }
+	            }
+	
+	            farmmapObj.addMarker(markerLayerName, markerOptions, map1);
+	
+	            markerOptions = {
+	                id: 'marker4',
+	                iconSizeWidth: 70,
+	                iconSizeHeight: 70,
+	                iconUrl: reqUrl + 'images/marker/marker3.png',
+	                x: 127.30509917810372,
+	                y: 36.492736592906944,
+	                epsg: "EPSG:4326",
+	                opacity: 0.8,
+	                clickFunc: markerClick,
+	                data: {
+	                    id: 'marker4',
+	                    iconSize: '70/70',
+	                    xy: '39.244113294906406/77.62617078940632',
+	                    epsg: "EPSG:4326"
+	                }
+	            }
+	
+	            farmmapObj.addMarker(markerLayerName, markerOptions, map1);
+	        }
+	
+	        var mId;
+	
+	        function markerClick(e) {
+	            if (mId == e.object.id && $("#markerClickDiv").is(':visible')) {
+	                $("#markerClickDiv").hide();
+	            } else {
+	                var data = e.object.data;
+	                var keys = Object.keys(data);
+	                var text = "";
+	                for (var i = 0; i < keys.length; i++) {
+	                    var searchData = data[keys[i]];
+	                    text += keys[i] + " : " + data[keys[i]] + "\r\n";;
+	                }
+	                $("#markerClickInfo").val(text);
+	                $("#markerClickDiv").show();
+	
+	                mId = e.object.id;
+	            }
+	        }
+	
+	        function markerShowHide() {
+	            var marker = farmmapObj.getObject("marker", "marker1", map1);
+	            if (marker != null) {
+	                if (farmmapObj.isMarkerVisible(marker)) {
+	                    farmmapObj.hideMarker(marker);
+	                } else {
+	                    farmmapObj.showMarker(marker);
+	                }
+	            }
+	        }
+	
+	        function markerShowAllHideAll(type) {
+	            var layer = farmmapObj.getObject("layer", "markerLayer", map1);
+	            if (layer != null) {
+	                if (type == "showAll") {
+	                    farmmapObj.showAllMarker("markerLayer", map1);
+	                } else {
+	                    farmmapObj.hideAllMarker("markerLayer", map1);
+	                }
+	            }
+	        }
+	
+	        var sizeW = 100;
+	        var sizeH = 120;
+	
+	        function setMarkerSize() {
+	            var marker = farmmapObj.getObject("marker", "marker1", map1);
+	            if (marker != null) {
+	                var size = {
+	                    iconSizeWidth: sizeW,
+	                    iconSizeHeight: sizeH
+	                };
+	                farmmapObj.setMarkerSize(marker, size);
+	
+	                sizeW += 10;
+	                sizeH += 10;
+	            }
+	        }
+	
+	        var mx = 982600.46915681;
+	        var my = 1832833.4243186;
+	
+	        function setMarkerLocation() {
+	            var marker = farmmapObj.getObject("marker", "marker1", map1);
+	            if (marker != null) {
+	                mx += 10;
+	                var xy = {
+	                    x: mx,
+	                    y: my
+	                };
+	                farmmapObj.setMarkerLocation(marker, xy);
+	            }
+	        }
+	
+	        function setMarkerIcon() {
+	            var marker = farmmapObj.getObject("marker", "marker1", map1);
+	            if (marker != null) {
+	                var icon = {
+	                    iconUrl: reqUrl + "images/marker/marker3.png",
+	                    opacity: 0.3
+	                }
+	                farmmapObj.setMarkerIcon(marker, icon);
+	            }
+	        }
+	
+	        function setMarkerData() {
+	            var marker = farmmapObj.getObject("marker", "marker1", map1);
+	            if (marker != null) {
+	                var data = {
+	                    id: 'marker1-1',
+	                    iconUrl: reqUrl + "images/marker/marker3.png",
+	                    opacity: 0.3
+	                }
+	                farmmapObj.setMarkerData(marker, data);
+	            }
+	        }
+	
+	        function removeMarker() {
+	            var marker = farmmapObj.getObject("marker", "marker1", map1);
+	            if (marker != null) {
+	                farmmapObj.removeMarker(marker);
+	            }
+	        }
+	
+	        function addVector(type) {
+	            var layer = farmmapObj.getObject("layer", "vectorLayer", map1);
+	            var vectorOptions = {};
+	            if (layer != null) {
+	                if (type == "point") {
+	                    vectorOptions = {
+	                        id: 'point1',
+	                        type: type,
+	                        x: 982709.00765681,
+	                        y: 1832877.1211186,
+	                        attributes: {
+	                            id: 'point1'
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "point2",
+	                        type: type,
+	                        x: 982600.46915681,
+	                        y: 1832833.4243186,
+	                        attributes: {
+	                            id: "point2"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "point3",
+	                        type: type,
+	                        x: 982742.24915681,
+	                        y: 1832820.4193186,
+	                        style: {
+	                            fillColor: "#ff99ee",
+	                            pointRadius: 20,
+	                            strokeWidth: 4,
+	                            strokeColor: "#e62222",
+	                            fontColor: "#ffffff",
+	                            fontSize: "12px",
+	                            fontWeight: "bold",
+	                            label: "point3",
+	                            labelYOffset: -30,
+	                            labelOutlineColor: "black",
+	                            labelOutlineWidth: 10,
+	                            labelOutlineOpacity: 0.7
+	                        },
+	                        data: {
+	                            id: "point3",
+	                            fillColor: "#ff99ee",
+	                            pointRadius: 20,
+	                            strokeWidth: 4,
+	                            strokeColor: "#e62222"
+	                        },
+	                        attributes: {
+	                            id: "point3"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "point4",
+	                        type: type,
+	                        x: 982500.76415681,
+	                        y: 1832837.7593186,
+	                        style: {
+	                            fillColor: "#ff99ee",
+	                            pointRadius: 20,
+	                            graphicName: "cross",
+	                            strokeWidth: 4,
+	                            strokeColor: "#e62222",
+	                            fontColor: "#ffffff",
+	                            fontSize: "12px",
+	                            fontWeight: "bold",
+	                            label: "point4",
+	                            labelYOffset: -30,
+	                            labelOutlineColor: "black",
+	                            labelOutlineWidth: 10,
+	                            labelOutlineOpacity: 0.7
+	                        },
+	                        data: {
+	                            id: "point4",
+	                            fillColor: "#ff99ee",
+	                            pointRadius: 20,
+	                            graphicName: "cross",
+	                            strokeWidth: 4,
+	                            strokeColor: "#e62222",
+	                            fontColor: "#ffffff",
+	                            fontSize: "12px",
+	                            fontWeight: "bold",
+	                            label: "point4",
+	                            labelYOffset: -30,
+	                            labelOutlineColor: "black",
+	                            labelOutlineWidth: 10,
+	                            labelOutlineOpacity: 0.7
+	                        },
+	                        attributes: {
+	                            id: "point4"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "point5",
+	                        type: type,
+	                        x: 982558.13915681,
+	                        y: 1832900.7443186,
+	                        attributes: {
+	                            id: "point5"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "point6",
+	                        type: type,
+	                        x: 982674.92915681,
+	                        y: 1832838.0143186,
+	                        style: {
+	                            pointRadius: 20,
+	                            graphicWidth: 70,
+	                            graphicHeight: 70,
+	                            graphicXOffset: -70 / 2,
+	                            graphicYOffset: -60,
+	                            externalGraphic: reqUrl + "images/marker/marker3.png",
+	                            fontColor: "blue",
+	                            fontSize: "20px",
+	                            fontStyle: "italic",
+	                            label: "point6",
+	                            labelYOffset: -10,
+	                            labelOutlineColor: "red",
+	                            labelOutlineWidth: 10,
+	                            labelOutlineOpacity: 0.7
+	                        },
+	                        data: {
+	                            pointRadius: 20,
+	                            graphicWidth: 70,
+	                            graphicHeight: 70,
+	                            graphicXOffset: -70 / 2,
+	                            graphicYOffset: -60,
+	                            externalGraphic: reqUrl + "images/marker/marker3.png",
+	                            fontColor: "blue",
+	                            fontSize: "20px",
+	                            fontStyle: "italic",
+	                            label: "point6",
+	                            labelYOffset: -10,
+	                            labelOutlineColor: "red",
+	                            labelOutlineWidth: 10,
+	                            labelOutlineOpacity: 0.7
+	                        },
+	                        attributes: {
+	                            id: "point6"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "point7",
+	                        type: type,
+	                        x: 982656.31415681,
+	                        y: 1832779.9436101,
+	                        style: {
+	                            pointRadius: 20,
+	                            graphicName: "star",
+	                            fontColor: "blue",
+	                            fontSize: "20px",
+	                            fontStyle: "italic",
+	                            label: "point7",
+	                            labelYOffset: -20,
+	                            labelOutlineColor: "red",
+	                            labelOutlineWidth: 10,
+	                            labelOutlineOpacity: 0.7
+	                        },
+	                        attributes: {
+	                            id: "point7"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: 'point8',
+	                        type: type,
+	                        x: 14171781.26262,
+	                        y: 4368702.6029289,
+	                        epsg: "EPSG:3857",
+	                        attributes: {
+	                            id: 'point8'
+	                        },
+	                        data: {
+	                            id: 'point8',
+	                            x: 14171781.26262,
+	                            y: 4368702.6029289,
+	                            epsg: "EPSG:3857"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: 'point9',
+	                        type: type,
+	                        x: 127.30509917810372,
+	                        y: 36.492736592906944,
+	                        epsg: "EPSG:4326",
+	                        attributes: {
+	                            id: 'point9'
+	                        },
+	                        data: {
+	                            id: 'point9',
+	                            x: 127.30509917810372,
+	                            y: 36.492736592906944,
+	                            epsg: "EPSG:4326"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                } else if (type == "lineString") {
+	                    vectorOptions = {
+	                        id: "lineString1",
+	                        type: type,
+	                        xy: [{
+	                            x: 982500.76415681,
+	                            y: 1832837.7593186
+	                        }, {
+	                            x: 982558.13915681,
+	                            y: 1832900.7443186
+	                        }, {
+	                            x: 982600.46915681,
+	                            y: 1832833.4243186
+	                        }],
+	                        attributes: {
+	                            id: "lineString1"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "lineString2",
+	                        type: type,
+	                        xy: [{
+	                            x: 982656.31415681,
+	                            y: 1832779.9436101
+	                        }, {
+	                            x: 982742.24915681,
+	                            y: 1832820.4193186
+	                        }, {
+	                            x: 982709.00765681,
+	                            y: 1832877.1211186
+	                        }, {
+	                            x: 982674.92915681,
+	                            y: 1832838.0143186
+	                        }],
+	                        style: {
+	                            strokeWidth: 10,
+	                            strokeColor: "#ff0000",
+	                            strokeDashstyle: "dashdot",
+	                            strokeLinecap: "round",
+	                            fontColor: "#ffffff",
+	                            fontSize: "12px",
+	                            fontWeight: "bold",
+	                            label: "lineString2",
+	                            labelYOffset: -30,
+	                            labelOutlineColor: "black",
+	                            labelOutlineWidth: 10,
+	                            labelOutlineOpacity: 0.7
+	                        },
+	                        data: {
+	                            id: "lineString2",
+	                            strokeWidth: 10,
+	                            strokeColor: "#ff0000",
+	                            strokeDashstyle: "dashdot",
+	                            strokeLinecap: "round"
+	                        },
+	                        attributes: {
+	                            id: "lineString2"
+	                        }
+	                    }
+	                    vectorOptions.data.xy = JSON.stringify(vectorOptions.xy);
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "lineString3",
+	                        type: type,
+	                        xy: [{
+	                            x: 14171538.813920587,
+	                            y: 4368634.708014407
+	                        }, {
+	                            x: 14171781.26262,
+	                            y: 4368702.6029289
+	                        }],
+	                        epsg: "EPSG:900913",
+	                        data: {
+	                            epsg: "EPSG:900913"
+	                        },
+	                        attributes: {
+	                            id: "lineString3"
+	                        }
+	                    }
+	                    vectorOptions.data.xy = JSON.stringify(vectorOptions.xy);
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	                } else if (type == "polygon") {
+	                    vectorOptions = {
+	                        id: "polygon1",
+	                        type: type,
+	                        xy: [{
+	                            x: 982500.76415681,
+	                            y: 1832837.7593186
+	                        }, {
+	                            x: 982558.13915681,
+	                            y: 1832900.7443186
+	                        }, {
+	                            x: 982600.46915681,
+	                            y: 1832833.4243186
+	                        }, {
+	                            x: 982500.76415681,
+	                            y: 1832837.7593186
+	                        }],
+	                        attributes: {
+	                            id: "polygon1"
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "polygon2",
+	                        type: type,
+	                        xy: [{
+	                            x: 982656.31415681,
+	                            y: 1832779.9436101
+	                        }, {
+	                            x: 982742.24915681,
+	                            y: 1832820.4193186
+	                        }, {
+	                            x: 982709.00765681,
+	                            y: 1832877.1211186
+	                        }, {
+	                            x: 982674.92915681,
+	                            y: 1832838.0143186
+	                        }],
+	                        attributes: {
+	                            id: "polygon2"
+	                        },
+	                        style: {
+	                            fillColor: "black",
+	                            strokeWidth: 10,
+	                            strokeColor: "#ff0000",
+	                            strokeDashstyle: "dashdot",
+	                            strokeLinecap: "round",
+	                            fontSize: "20px",
+	                            fontColor: "black",
+	                            fontWeight: "bold",
+	                            label: "polygon2",
+	                            labelOutlineColor: "#ffffff",
+	                            labelOutlineWidth: 10
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	                } else if (type == "circle") {
+	                    vectorOptions = {
+	                        id: "circle1",
+	                        type: type,
+	                        radius: 50,
+	                        x: 982572.67415681,
+	                        y: 1832838.5243186,
+	                        attributes: {
+	                            id: "circle1"
+	                        },
+	                        style: {
+	                            fillColor: "white",
+	                            strokeWidth: 5,
+	                            fontColor: "blue",
+	                            fontSize: "15px",
+	                            label: "circle1",
+	                            labelOutlineColor: "yellow",
+	                            labelOutlineWidth: 5,
+	                            labelYOffset: -150
+	                        },
+	                        data: {
+	                            x: 982572.67415681,
+	                            y: 1832838.5243186
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "circle2",
+	                        type: type,
+	                        radius: 50,
+	                        x: 982758.05915681,
+	                        y: 1832803.0793186,
+	                        attributes: {
+	                            id: "circle2"
+	                        },
+	                        style: {
+	                            fillColor: "#bf87fa",
+	                            strokeWidth: 5,
+	                            strokeDashstyle: "dash",
+	                            fontColor: "blue",
+	                            fontSize: "20px",
+	                            fontStyle: "italic",
+	                            label: "circle2",
+	                            labelOutlineColor: "red",
+	                            labelOutlineWidth: 10
+	                        },
+	                        data: {
+	                            x: 982758.05915681,
+	                            y: 1832803.0793186
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	
+	                    vectorOptions = {
+	                        id: "circle3",
+	                        type: type,
+	                        radius: 30,
+	                        x: 127.30541896131453,
+	                        y: 36.493039029262434,
+	                        epsg: "EPSG:4326",
+	                        attributes: {
+	                            id: "circle3"
+	                        },
+	                        data: {
+	                            epsg: "EPSG:4326",
+	                            x: 127.30541896131453,
+	                            y: 36.493039029262434
+	                        }
+	                    }
+	                    farmmapObj.addVector("vectorLayer", vectorOptions, map1);
+	                }
+	            } else {
+	                alert("vectorLayer 이름의 레이어가 없습니다.");
+	            }
+	        }
+	
+	        function vectorSelect(feature) {
+	            if (feature.id == "point6") {
+	                feature.style.externalGraphic = reqUrl + 'images/marker/marker1.png';
+	            }
+	
+	            if (feature.id == "point3") {
+	                feature.style.fillColor = "#00ff00";
+	                feature.style.strokeColor = "#ffffff";
+	            }
+	
+	            if (feature.id == "lineString2") {
+	                feature.style.strokeColor = "#0505f5";
+	                feature.style.strokeDashstyle = "dot";
+	                feature.style.strokeLinecap = "square";
+	            }
+	
+	            if (feature.id == "polygon2") {
+	                feature.style.fillColor = "#0505f5";
+	                feature.style.strokeColor = "yellow";
+	                feature.style.strokeDashstyle = "dot";
+	            }
+	
+	            if (feature.id == "circle2") {
+	                feature.style.strokeColor = "white";
+	                feature.style.strokeDashstyle = "solid";
+	            }
+	
+	            feature.layer.redraw();
+	
+	            if (Object.keys(feature.data).length > 0) {
+	                var data = feature.data;
+	                var keys = Object.keys(data);
+	                var text = "";
+	                for (var i = 0; i < keys.length; i++) {
+	                    var searchData = data[keys[i]];
+	                    text += keys[i] + " : " + data[keys[i]] + "\r\n";;
+	                }
+	                $("#markerClickInfo").val(text);
+	                $("#markerClickDiv").show();
+	            }
+	        }
+	
+	        function vectorUnselect(feature) {
+	            if (feature.id == "point6") {
+	                feature.style.externalGraphic = reqUrl + 'images/marker/marker3.png';
+	            }
+	
+	            if (feature.id == "point3") {
+	                feature.style.fillColor = "#ff99ee";
+	                feature.style.strokeColor = "#e62222";
+	            }
+	
+	            if (feature.id == "lineString2") {
+	                feature.style.strokeColor = "#ff0000";
+	                feature.style.strokeDashstyle = "dashdot";
+	                feature.style.strokeLinecap = "round";
+	            }
+	
+	            if (feature.id == "polygon2") {
+	                feature.style.fillColor = "black";
+	                feature.style.strokeColor = "#ff0000";
+	                feature.style.strokeDashstyle = "dashdot";
+	            }
+	
+	            if (feature.id == "circle2") {
+	                feature.style.strokeColor = "black";
+	                feature.style.strokeDashstyle = "dash";
+	            }
+	
+	            feature.layer.redraw();
+	
+	            $("#markerClickDiv").hide();
+	        }
+	
+	        function setVectorStyle(type, vecId) {
+	            var vec = farmmapObj.getObject("vector", vecId, map1);
+	            var styleOptions = {};
+	            if (vec != null) {
+	                if (type == "point") {
+	                    styleOptions = {
+	                        fillColor: "#ff99ee",
+	                        graphicName: "x",
+	                        pointRadius: 20,
+	                        strokeWidth: 4,
+	                        strokeColor: "#e62222",
+	                        fontColor: "#ffffff",
+	                        fontSize: "12px",
+	                        fontWeight: "bold",
+	                        label: vec.id + "스타일변경",
+	                        labelYOffset: -30,
+	                        labelOutlineColor: "black",
+	                        labelOutlineWidth: 10,
+	                        labelOutlineOpacity: 0.7
+	                    }
+	                    farmmapObj.setVectorStyle(vec, styleOptions);
+	                } else if (type == "lineString") {
+	                    styleOptions = {
+	                        strokeWidth: 10,
+	                        strokeColor: "blue",
+	                        fontColor: "#000000",
+	                        fontSize: "20px",
+	                        fontWeight: "bold",
+	                        label: vec.id + "스타일변경",
+	                        labelYOffset: -30,
+	                        labelOutlineColor: "white",
+	                        labelOutlineWidth: 10,
+	                        labelOutlineOpacity: 0.7
+	                    }
+	                    farmmapObj.setVectorStyle(vec, styleOptions);
+	                }
+	            } else {
+	                alert(vecId + " 아이디의 벡터가 없습니다.");
+	            }
+	        }
+	
+	        function hideShowVector(vecId) {
+	            var vec = farmmapObj.getObject("vector", vecId, map1);
+	            if (vec != null) {
+	                if (farmmapObj.isVectorVisible(vec)) {
+	                    farmmapObj.hideVector(vec);
+	                } else {
+	                    farmmapObj.showVector(vec);
+	                }
+	            } else {
+	                alert(vecId + " 아이디의 벡터가 없습니다.");
+	            }
+	        }
+	
+	        function hideShowAllVector(type) {
+	            var layer = farmmapObj.getObject("layer", "vectorLayer", map1);
+	            if (layer != null) {
+	                if (type == "showAll") {
+	                    farmmapObj.showAllVector("vectorLayer", map1);
+	                } else {
+	                    farmmapObj.hideAllVector("vectorLayer", map1);
+	                }
+	            } else {
+	                alert("vectorLayer 이름의 레이어가 없습니다.");
+	            }
+	        }
+	
+	        function setVectorData(type, vecId) {
+	            var vec = farmmapObj.getObject("vector", vecId, map1);
+	            if (vec != null) {
+	                var dataOptions = {};
+	                if (type == "attr") {
+	                    dataOptions = {
+	                        id: vec.id + "속성 변경"
+	                    }
+	                    farmmapObj.setVectorData(vec, type, dataOptions);
+	                } else if (type == "data") {
+	                    dataOptions = {
+	                        id: vec.id,
+	                        desc: "데이터가 변경되었습니다."
+	                    }
+	                    farmmapObj.setVectorData(vec, type, dataOptions);
+	                }
+	            } else {
+	                alert(vecId + " 아이디의 벡터가 없습니다.");
+	            }
+	        }
+	
+	        function removeVector(vecId) {
+	            var vec = farmmapObj.getObject("vector", vecId, map1);
+	            if (vec != null) {
+	                farmmapObj.removeVector(vec);
+	            } else {
+	                alert(vecId + " 아이디의 벡터가 없습니다.");
+	            }
+	        }
+	
+	        var returnjson;
+	        function searchCallbackRelationLayer(data) {
+	            returnjson = data;
+	            var layer = farmmapObj.getObject("layer", "relationVectorLayer", map1);
+	            if (layer != null) {
+	                farmmapObj.removeLayer("relationVectorLayer", map1);
+	            }
+	        }
+	
+	        function addRelationVector() {
+	            var data = returnjson;
+	            if (returnjson == null)
+	                return;
+	
+	            var keys = Object.keys(data);
+	            var text = "";
+	            for (var i = 0; i < keys.length; i++) {
+	                var searchData = data[keys[i]];
+	                text += keys[i] + " : " + JSON.stringify(searchData) + "\r\n\r\n";
+	            }
+	
+	            $("#info").val(xyString + "\n\n" + text);
+	
+	            var layerName = "relationVectorLayer";
+	            var layerOption = {
+	                hover: false,
+	                multiple: false,
+	                toggle: true,
+	                onSelect: vectorSelect2,
+	                onUnselect: vectorUnselect2
+	            }
+	            farmmapObj.addVectorLayer(layerName, layerOption, map1);
+	
+	            var farmmapData;
+	            if (data.output.farmmapData != null) {
+	                farmmapData = data.output.farmmapData;
+	                for (var k = 0; k < farmmapData.data.length; k++) {
+	
+	                    if (k > 300)
+	                        break;
+	
+	                    var feature = farmmapData.data[k];
+	                    var xy = feature.geometry[0].xy;
+	
+	                    var id = "";
+	                    var label = "";
+	
+	                    if (data.input.columnType.toUpperCase() == "KOR") {
+	                        id = feature.지오메트리ID;
+	                        label = feature.지오메트리ID;
+	                    } else {
+	                        id = feature.gid;
+	                        label = feature.gid;
+	                    }
+	
+	                    vectorOptions = {
+	                        id: id.toString(),
+	                        type: "polygon",
+	                        xy: xy,
+	                        data: feature,
+	                        style: {
+	                            fillColor: "black",
+	                            fillOpacity: 0.5,
+	                            strokeWidth: 2,
+	                            strokeColor: "#ff0000",
+	                            strokeLinecap: "round",
+	                            fontSize: "12px",
+	                            fontColor: "black",
+	                            fontWeight: "bold",
+	                            label: label.toString(),
+	                            labelOutlineColor: "#ffffff",
+	                            labelOutlineWidth: 3
+	                        }
+	                    }
+	                    farmmapObj.addVector(layerName, vectorOptions, map1);
+	                }
+	            }
+	
+	            var sourceData;
+	            if (data.output.source != null) {
+	                sourceData = data.output.source;
+	                for (var k = 0; k < sourceData.data.length; k++) {
+	
+	                    var feature = sourceData.data[k];
+	                    var xy = feature.geometry[0].xy;
+	
+	                    var label = "";
+	
+	                    if (data.input.mapType == "farmmap") {
+	                        if (data.input.columnType.toUpperCase() == "KOR") {
+	                            label = feature.PNU지번코드;
+	                        } else {
+	                            label = feature.pnu_lnm_cd;
+	                        }
+	                    } else {
+	                        if (data.input.columnType.toUpperCase() == "KOR") {
+	                            label = feature.필지고유번호;
+	                        } else {
+	                            label = feature.pnu;
+	                        }
+	                    }
+	
+	                    vectorOptions = {
+	                        id: ("source_" + k).toString(),
+	                        type: "polygon",
+	                        xy: xy,
+	                        data: feature,
+	                        style: {
+	                            fillColor: "#FFFFFF",
+	                            fillOpacity: 0.5,
+	                            strokeWidth: 5,
+	                            strokeColor: "#FFFFFF"
+	                        }
+	                    }
+	                    farmmapObj.addVector(layerName, vectorOptions, map1);
+	                }
+	            }
+	
+	            var targetData;
+	            if (data.output.target != null) {
+	                targetData = data.output.target;
+	                for (var k = 0; k < targetData.data.length; k++) {
+	
+	                    var feature = targetData.data[k];
+	                    var xy = feature.geometry[0].xy;
+	
+	                    vectorOptions = {
+	                        id: "target_" + feature.rank_label.toString(),
+	                        type: "polygon",
+	                        xy: xy,
+	                        data: feature,
+	                        style: {
+	                            fillColor: "black",
+	                            fillOpacity: 0.001,
+	                            strokeWidth: 2,
+	                            strokeColor: "#ff0000",
+	                            strokeLinecap: "round",
+	                            fontSize: "12px",
+	                            fontColor: "yellow",
+	                            fontWeight: "bold",
+	                            label: feature.rank_label.toString(),
+	                            labelOutlineColor: "blue",
+	                            labelOutlineWidth: 3
+	                        }
+	                    }
+	                    farmmapObj.addVector(layerName, vectorOptions, map1);
+	                }
+	            }
+	        }
+	
+	        function vectorSelect2(feature) {
+	            feature.style.fillColor = "#0505f5";
+	            feature.style.strokeColor = "yellow";
+	            feature.layer.redraw();
+	        }
+	
+	        function vectorUnselect2(feature) {
+	            if (feature.id.indexOf("source_") != -1) {
+	                feature.style.fillColor = "#FFFFFF";
+	                feature.style.strokeColor = "#FFFFFF";
+	            } else {
+	                feature.style.fillColor = "black";
+	                feature.style.strokeColor = "#ff0000";
+	            }
+	            feature.layer.redraw();
+	        }
+	
+	        function getButton(ids) {
+	        	var menuId = ids.split(",")[0];
+	        	var buttonId = ids.split(",")[1];
+	        	
+	        	var menuDivs = $("div[id^='menu']");
+	            for (var i = 0; i < menuDivs.length; i++) {
+	                if (menuDivs[i].id == menuId) {
+	                	$(menuDivs[i]).css("background","#60caae");
+	                	$(menuDivs[i]).css("color","#ffffff");
+	                } else {
+	                	$(menuDivs[i]).css("background","");
+	                	$(menuDivs[i]).css("color","");
+	                }
+	            }
+	        	
+	            var buttonDivs = $("div[id^='btn']");
+	            for (var i = 0; i < buttonDivs.length; i++) {
+	                if (buttonDivs[i].id == buttonId) {
+	                    $(buttonDivs[i]).show();
+	                } else {
+	                    $(buttonDivs[i]).hide();
+	                }
+	            }
+	        }
+	        
+	        
+	        
+	        //TEST
+	        function removeAnalysis() {
+	        	var layer = farmmapObj.getObject("layer", "trit_info_bass_analysis_01", map1);
+	        	if(layer != null) {
+					farmmapObj.removeLayer("trit_info_bass_analysis_01", map1);
+					
+					var farmmapLayer = farmmapObj.getObject("layer", "팜맵", map1);
+		            if (farmmapLayer != null) {
+		            	farmmapObj.removeLayer("팜맵", map1);
+		            }
+				}
+	        	
+	        	layer = farmmapObj.getObject("layer", "trit_info_bass_analysis_02", map1);
+	        	if(layer != null) {
+					farmmapObj.removeLayer("trit_info_bass_analysis_02", map1);
+					
+					var farmmapLayer = farmmapObj.getObject("layer", "팜맵", map1);
+		            if (farmmapLayer != null) {
+		            	farmmapObj.removeLayer("팜맵", map1);
+		            }
+				}
+	        	
+	        	layer = farmmapObj.getObject("layer", "farm_map_analysis", map1);
+				if(layer != null) {
+					farmmapObj.removeLayer("farm_map_analysis", map1);
+					
+					var baseLayer = farmmapObj.getObject("layer", "국토정보기본도", map1);
+		            if (baseLayer != null) {
+		            	farmmapObj.removeLayer("국토정보기본도", map1);
+		            }
+				}
+	        }
+	        
+	        function addTrit_info_bass_analysis_01() {
+	        	var layer = farmmapObj.getObject("layer", "trit_info_bass_analysis_01", map1);
+				if(layer != null) {
+					farmmapObj.removeLayer("trit_info_bass_analysis_01", map1);
+					
+					var farmmapLayer = farmmapObj.getObject("layer", "팜맵", map1);
+		            if (farmmapLayer != null) {
+		            	farmmapObj.removeLayer("팜맵", map1);
+		            }
+				} else {
+					removeAnalysis();
+					
+					var farmmapLayer = farmmapObj.getObject("layer", "팜맵", map1);
+		            if (farmmapLayer == null) {
+		            	farmmapObj.addFarmmapLayer("팜맵", map1);
+		            }
+					
+					var layerName = "trit_info_bass_analysis_01";
+					var url = farmmapObj.serverUrl + "/farmmap/wms?";
+					var layerObj = {
+							version : "1.1.1",
+							layers: "farmmap:trit_info_bass_analysis_01",
+							styles: "trit_info_bass_analysis_01_sy"
+					}
+					farmmapObj.addWMSLayer(layerName, url, layerObj, map1);
+				}
+	        }
+	        
+	        function addTrit_info_bass_analysis_02() {
+	        	var layer = farmmapObj.getObject("layer", "trit_info_bass_analysis_02", map1);
+				if(layer != null) {
+					farmmapObj.removeLayer("trit_info_bass_analysis_02", map1);
+					
+					var farmmapLayer = farmmapObj.getObject("layer", "팜맵", map1);
+		            if (farmmapLayer != null) {
+		            	farmmapObj.removeLayer("팜맵", map1);
+		            }
+				} else {
+					removeAnalysis();
+					
+					var farmmapLayer = farmmapObj.getObject("layer", "팜맵", map1);
+		            if (farmmapLayer == null) {
+		            	farmmapObj.addFarmmapLayer("팜맵", map1);
+		            }
+					
+					var layerName = "trit_info_bass_analysis_02";
+					var url = farmmapObj.serverUrl + "/farmmap/wms?";
+					var layerObj = {
+							version : "1.1.1",
+							layers: "farmmap:trit_info_bass_analysis_02",
+							styles: "trit_info_bass_analysis_02_sy"
+					}
+					farmmapObj.addWMSLayer(layerName, url, layerObj, map1);
+				}
+	        }
+	        
+	        function addFarm_map_analysis() {
+	        	var layer = farmmapObj.getObject("layer", "farm_map_analysis", map1);
+				if(layer != null) {
+					farmmapObj.removeLayer("farm_map_analysis", map1);
+					
+					var baseLayer = farmmapObj.getObject("layer", "국토정보기본도", map1);
+		            if (baseLayer != null) {
+		            	farmmapObj.removeLayer("국토정보기본도", map1);
+		            }
+				} else {
+					removeAnalysis();
+					
+					var baseLayer = farmmapObj.getObject("layer", "국토정보기본도", map1);
+		            if (baseLayer == null) {
+		            	farmmapObj.addBasicInfomapLayer("국토정보기본도", map1);
+		            }
+					
+					var layerName = "farm_map_analysis";
+					var url = farmmapObj.serverUrl + "/farmmap/wms?";
+					var layerObj = {
+							version : "1.1.1",
+							layers: "farmmap:farm_map_analysis_01",
+							styles: "farm_map_analysis_01_sy"
+					}
+					farmmapObj.addWMSLayer(layerName, url, layerObj, map1);
+					map1.zoomToExtent(new OpenLayers.Bounds(917170.57606688,1917069.806967,924122.89606688,1919844.206967)); //lbrt
+				}
+	        }
+	        
+	    </script>
+	</head>
+	
+	<body onload="init()">
+	
+	    <header>
+	        <div class="hd_top">
+	            <p>농식품 팜맵 지도 API 서비스</p>
+	        </div>
+	    </header>
+	
+	    <div>
+	        <div class="left">
+	            <br>
+	            <hr>
+	            <div id="menuMapMgr" onClick="getButton('menuMapMgr,btnMapMgr')" class="menu">지도관리 API</div><hr>
+	            <div id="menuLayer" onClick="getButton('menuLayer,btnLayer')" class="menu">레이어 API</div><hr>
+	            <div id="menuFarmmap" onClick="getButton('menuFarmmap,btnFarmmap')" class="menu">팜맵레이어 API</div><hr>
+	            <div id="menuMarker" onClick="getButton('menuMarker,btnMarker')" class="menu">마커 API</div><hr>
+	            <div id="menuVector" onClick="getButton('menuVector,btnVector')" class="menu">벡터 API</div><hr>
+	        </div>
+	
+	        <div class="right">
+	            <div>
+	                &nbsp;&nbsp; <b>위치</b> : <label id="whereis"></label> &nbsp;&nbsp;&nbsp;&nbsp; <b>줌</b> : <label id="zoom"></label>
+	            </div>
+				
+				<hr>
+				<div id="buttonGroup">
+		            <div id="btnMapMgr">
+		            	&nbsp;&nbsp;
+		                <button type="button" class="lbutton" onclick="javascript:addMoveendEvent();">moveend 이벤트추가</button>
+		                <button type="button" class="button" onclick="javascript:removeMoveendEvent();">moveend 이벤트제거</button>
+		                <button type="button" class="button" onclick="javascript:addMapEvent();">맵이벤트추가</button>
+		                <button type="button" class="button" onclick="javascript:removeMapEvent();">맵이벤트제거</button>
+		                <button type="button" class="button" onclick="javascript:addControl();">컨트롤추가</button>
+		                <button type="button" class="button" onclick="javascript:removeControl();">컨트롤제거</button>
+		                <button type="button" class="button" onclick="javascript:getObject();">객체찾기</button>
+		                <button type="button" class="rbutton" onclick="javascript:clearMap();">맵초기화</button>
+		            </div>
+		            <div id="btnLayer" style="display: none;">
+		            	&nbsp;&nbsp;
+		                <button type="button" class="lbutton" onclick="javascript:addcctv();">CCTV WMS추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:addMarkerLayer();">마커레이어 추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:addVectorLayer();">벡터레이어 추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:activateVectorLayerEvent();">벡터 이벤트 활성</button>
+		                <button type="button" class="button" onclick="javascript:deactivateVectorLayerEvent();">벡터 이벤트 비활성</button>
+		                <button type="button" class="button" onclick="javascript:layerShowHide();">레이어 보기/숨김</button>
+		                <button type="button" class="rbutton" onclick="javascript:getLayerNameList();">레이어목록조회</button>
+		            </div>
+		            <div id="btnFarmmap" style="display: none;">
+		            	&nbsp;&nbsp;
+		                <button type="button" class="lbutton" onclick="javascript:addFarmmapLayer();">팜맵 추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:addWhiteFarmmapLayer();">팜맵 백지도 추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:addBasicInfomapLayer();">국토정보기본도 추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:addSearchFarmmapDataEvent();">조회이벤트 추가</button>
+		                <button type="button" class="button" onclick="javascript:removeSearchFarmmapDataEvent();">조회이벤트 제거</button>
+		                <button type="button" class="rbutton" onclick="javascript:getLegendImage();">팜맵범례조회</button>
+		
+		                <div id="legendDiv" style="width: 100px; position: absolute; left: 1000px; top: 95px; z-index: 1006; display: none;">
+		                    <label id="legendImageLabel" style="color: teal; font-weight: 300; font-size: 15px;"></label> <img id="legendImage" src="" />
+		                </div>
+		            </div>
+		            <div id="btnMarker" style="display: none;">
+		            	&nbsp;&nbsp;
+		                <button type="button" class="lbutton" onclick="javascript:addMarkerLayer();">마커레이어 추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:addMarker();">마커생성</button>
+		                <button type="button" class="button" onclick="javascript:markerShowHide();">마커 보기/숨김</button>
+		                <button type="button" class="button" onclick="javascript:markerShowAllHideAll('showAll');">마커 전체보기</button>
+		                <button type="button" class="button" onclick="javascript:markerShowAllHideAll('hideAll');">마커 전체숨김</button>
+		                <button type="button" class="button" onclick="javascript:setMarkerSize();">마커 크기변경</button>
+		                <button type="button" class="button" onclick="javascript:setMarkerLocation();">마커 위치변경</button>
+		                <button type="button" class="button" onclick="javascript:setMarkerIcon();">마커 아이콘변경</button>
+		                <button type="button" class="button" onclick="javascript:setMarkerData();">마커 데이터변경</button>
+		                <button type="button" class="rbutton" onclick="javascript:removeMarker();">마커 제거</button>
+		            </div>
+		            <div id="btnVector" style="display: none;">
+		            	&nbsp;&nbsp;
+		                <button type="button" class="lbutton" onclick="javascript:addVectorLayer();">벡터레이어 추가/제거</button>
+		                <button type="button" class="button" onclick="javascript:addVector('point');">포인트 추가</button>
+		                <button type="button" class="button" onclick="javascript:addVector('lineString');">라인 추가</button>
+		                <button type="button" class="button" onclick="javascript:addVector('polygon');">폴리곤 추가</button>
+		                <button type="button" class="button" onclick="javascript:addVector('circle');">원 추가</button>
+		                <button type="button" class="button" onclick="javascript:hideShowVector('point2');">point2 숨김/보기</button>
+		                <button type="button" class="button" onclick="javascript:hideShowVector('point3');">point3 보기/보기</button>
+		                <button type="button" class="button" onclick="javascript:hideShowAllVector('hideAll');">벡터 전체숨김</button>
+		                <button type="button" class="button" onclick="javascript:hideShowAllVector('showAll');">벡터 전체보기</button>
+		                <button type="button" class="button" onclick="javascript:setVectorStyle('lineString','lineString1');">lineString1 스타일변경</button>
+		                <button type="button" class="button" onclick="javascript:setVectorData('data','point4');">point4 데이터변경</button>
+		                <button type="button" class="rbutton" onclick="javascript:removeVector('circle1');">circle1 제거</button>
+		            </div>
+	            </div>
+				<font size="2px">
+					<br>
+				</font>
+				
+	            <div id="mapDiv1" style="height: 70%;"></div>
+	            
+	            <div>
+	                <textarea id="info" name="info" rows="7" style="width:100%;border:solid 2px #244b6d;border-radius:5px;height: 10%;">
+					</textarea>
+	            </div>
+	
+	        </div>
+	    </div>
+	
+	    </div>
+	
+	    <div id="markerClickDiv" style="width: 400px; height: 70px; position: absolute; left: 400px; top: 200px; z-index: 1006; display: none;">
+	        <button type="button" class="button" onclick="javascript:$('#markerClickDiv').hide();" style="width: 45px; height: 25px; position: absolute; left: 330px; top: 10px; z-index: 1006;">닫기</button>
+	        <textarea id="markerClickInfo" name="markerClickInfo" class="pop">
+			</textarea>
+	    </div>
+	</body>
 </html>
