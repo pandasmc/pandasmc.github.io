@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>두레팜 - AI 폐자원 수거 플랫폼 (페이지 추가 버전)</title>
+    <title>두레팜 - AI 폐자원 수거 플랫폼 (모바일 최적화)</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -50,269 +50,223 @@
         .page-content.active {
             display: block;
         }
+        /* 모바일 사이드바 스타일 */
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        @media (max-width: 640px) {
+            #sidebar.hidden-mobile {
+                transform: translateX(-100%);
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 flex">
+<body class="bg-gray-50">
+    <!-- 로딩 스피너 -->
+    <div id="loader" class="fixed inset-0 bg-white flex justify-center items-center z-[100]">
+        <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-green-500"></div>
+    </div>
 
-    <!-- 사이드바 -->
-    <aside class="w-64 bg-gray-900 text-gray-300 flex flex-col p-4 fixed h-full shadow-lg">
-        <div class="flex items-center mb-10">
-            <i data-lucide="recycle" class="w-10 h-10 mr-3 text-green-400"></i>
-            <h1 class="text-2xl font-bold text-white">두레팜</h1>
-        </div>
-        <nav id="sidebar-nav" class="flex-grow">
-            <ul>
-                <li class="mb-3"><a href="#" data-target="dashboard" class="nav-link flex items-center py-2 px-4 text-white bg-green-600 rounded-lg font-semibold"><i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>대시보드</a></li>
-                <li class="mb-3"><a href="#" data-target="routes" class="nav-link flex items-center py-2 px-4 hover:bg-gray-700 rounded-lg"><i data-lucide="map" class="w-5 h-5 mr-3"></i>수거 경로</a></li>
-                <li class="mb-3"><a href="#" data-target="analytics" class="nav-link flex items-center py-2 px-4 hover:bg-gray-700 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i>생산 분석</a></li>
-                <li class="mb-3"><a href="#" data-target="farms" class="nav-link flex items-center py-2 px-4 hover:bg-gray-700 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-3"></i>농가 관리</a></li>
-                <li class="mb-3"><a href="#" data-target="settings" class="nav-link flex items-center py-2 px-4 hover:bg-gray-700 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-3"></i>설정</a></li>
-            </ul>
-        </nav>
-        <div class="mt-auto">
-            <div class="bg-gray-800 p-4 rounded-lg text-center">
-                <i data-lucide="truck" class="w-12 h-12 mx-auto text-green-400"></i>
-                <p class="mt-2 text-sm text-gray-400">실시간 수거 현황</p>
-                <button class="mt-3 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg w-full">
-                    상세 보기
-                </button>
+    <div class="flex">
+        <!-- 사이드바 -->
+        <aside id="sidebar" class="w-64 bg-gray-900 text-gray-300 flex-col p-4 fixed h-full shadow-lg z-40 hidden-mobile sm:flex">
+            <div class="flex items-center mb-10">
+                <i data-lucide="recycle" class="w-10 h-10 mr-3 text-green-400"></i>
+                <h1 class="text-2xl font-bold text-white">두레팜</h1>
             </div>
-        </div>
-    </aside>
-
-    <!-- 메인 콘텐츠 -->
-    <main class="ml-64 flex-1 p-8">
-        <!-- 대시보드 페이지 -->
-        <div id="dashboard-page" class="page-content active">
-            <!-- 헤더 -->
-            <header class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="text-3xl font-bold text-gray-800">AI 수거 통합 플랫폼</h2>
-                    <p id="last-updated" class="text-sm text-gray-500">마지막 업데이트: </p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></i>
-                        <input type="text" placeholder="검색..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    </div>
-                    <button class="p-2 rounded-full hover:bg-gray-200"><i data-lucide="bell" class="text-gray-600"></i></button>
-                    <div class="flex items-center space-x-2">
-                        <img src="https://placehold.co/40x40/A7F3D0/1F2937?text=H" alt="User Avatar" class="w-10 h-10 rounded-full">
-                        <div>
-                            <p class="font-semibold text-gray-700">황진경</p>
-                            <p class="text-sm text-gray-500">대표</p>
-                        </div>
-                    </div>
-                </div>
-            </header>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card">
-                        <div class="p-3 rounded-full bg-green-100 mr-4"><i data-lucide="package" class="w-8 h-8 text-green-600"></i></div>
-                        <div><p class="text-sm text-gray-500">총 수거량 (톤)</p><p class="text-2xl font-bold text-gray-800">875</p></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card">
-                        <div class="p-3 rounded-full bg-blue-100 mr-4"><i data-lucide="flame" class="w-8 h-8 text-blue-600"></i></div>
-                        <div><p class="text-sm text-gray-500">펠릿 생산량 (톤)</p><p class="text-2xl font-bold text-gray-800">230</p></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card">
-                        <div class="p-3 rounded-full bg-yellow-100 mr-4"><i data-lucide="truck" class="w-8 h-8 text-yellow-600"></i></div>
-                        <div><p class="text-sm text-gray-500">운행 차량</p><p class="text-2xl font-bold text-gray-800">12 / 15</p></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card">
-                        <div class="p-3 rounded-full bg-red-100 mr-4"><i data-lucide="leaf" class="w-8 h-8 text-red-600"></i></div>
-                        <div><p class="text-sm text-gray-500">탄소 절감량 (tCO2)</p><p class="text-2xl font-bold text-gray-800">96</p></div>
-                    </div>
-                </div>
-                <div class="lg:col-span-2 bg-white p-4 rounded-xl shadow-md h-[500px]"><div id="map"></div></div>
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">실시간 수거 경로</h3>
-                    <div class="space-y-4">
-                        <div class="border p-4 rounded-lg interactive-card cursor-pointer">
-                            <div class="flex justify-between items-center"><p class="font-bold text-gray-700">경남 서부권</p><span class="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">진행 중</span></div>
-                            <p class="text-sm text-gray-500 mt-1">담당: 김철수 (12가 3456)</p>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div class="bg-green-500 h-2.5 rounded-full" style="width: 75%"></div></div>
-                            <p class="text-right text-sm text-gray-500 mt-1">7/10 농가 완료</p>
-                        </div>
-                        <div class="border p-4 rounded-lg interactive-card cursor-pointer">
-                            <div class="flex justify-between items-center"><p class="font-bold text-gray-700">경남 동부권</p><span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded-full">대기 중</span></div>
-                            <p class="text-sm text-gray-500 mt-1">담당: 박영희 (34나 5678)</p>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div class="bg-blue-500 h-2.5 rounded-full" style="width: 10%"></div></div>
-                            <p class="text-right text-sm text-gray-500 mt-1">1/12 농가 완료</p>
-                        </div>
-                        <div class="border p-4 rounded-lg interactive-card cursor-pointer">
-                            <div class="flex justify-between items-center"><p class="font-bold text-gray-700">전남권</p><span class="text-xs font-semibold bg-gray-200 text-gray-800 px-2 py-1 rounded-full">완료</span></div>
-                            <p class="text-sm text-gray-500 mt-1">담당: 이민준 (56다 7890)</p>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div class="bg-gray-400 h-2.5 rounded-full" style="width: 100%"></div></div>
-                            <p class="text-right text-sm text-gray-500 mt-1">8/8 농가 완료</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">주요 생산량 추이 (단위: 톤)</h3>
-                    <div class="h-80"><canvas id="productionYieldChart"></canvas></div>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">펠릿 재고 현황 (단위: 톤)</h3>
-                    <div class="h-80"><canvas id="pelletStatesChart"></canvas></div>
+            <nav id="sidebar-nav" class="flex-grow">
+                <ul>
+                    <li class="mb-3"><a href="#" data-target="dashboard" class="nav-link flex items-center py-2 px-4 rounded-lg"><i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>대시보드</a></li>
+                    <li class="mb-3"><a href="#" data-target="routes" class="nav-link flex items-center py-2 px-4 rounded-lg"><i data-lucide="map" class="w-5 h-5 mr-3"></i>수거 경로</a></li>
+                    <li class="mb-3"><a href="#" data-target="analytics" class="nav-link flex items-center py-2 px-4 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i>생산 분석</a></li>
+                    <li class="mb-3"><a href="#" data-target="farms" class="nav-link flex items-center py-2 px-4 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-3"></i>농가 관리</a></li>
+                    <li class="mb-3"><a href="#" data-target="settings" class="nav-link flex items-center py-2 px-4 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-3"></i>설정</a></li>
+                </ul>
+            </nav>
+            <div class="mt-auto">
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <i data-lucide="truck" class="w-12 h-12 mx-auto text-green-400"></i>
+                    <p class="mt-2 text-sm text-gray-400">실시간 수거 현황</p>
+                    <button class="mt-3 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg w-full">상세 보기</button>
                 </div>
             </div>
-        </div>
-
-        <!-- 수거 경로 페이지 -->
-        <div id="routes-page" class="page-content">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8">수거 경로 관리</h2>
-            <div class="bg-white p-4 rounded-xl shadow-md h-[70vh]">
-                <div id="routes-map"></div>
-            </div>
-        </div>
-
-        <!-- 생산 분석 페이지 -->
-        <div id="analytics-page" class="page-content">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8">생산 분석</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">월별 탄소 절감량 (tCO2)</h3>
-                    <div class="h-80"><canvas id="carbonReductionChart"></canvas></div>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">펠릿 종류별 판매 현황</h3>
-                    <div class="h-80"><canvas id="pelletSalesChart"></canvas></div>
-                </div>
-            </div>
-        </div>
+        </aside>
         
-        <!-- 농가 관리 페이지 -->
-        <div id="farms-page" class="page-content">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8">농가 관리</h2>
-            <div class="bg-white p-6 rounded-xl shadow-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-gray-800">등록 농가 목록</h3>
-                    <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center"><i data-lucide="plus" class="w-5 h-5 mr-2"></i>신규 농가 등록</button>
-                </div>
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="border-b"><th class="p-4">농가명</th><th class="p-4">지역</th><th class="p-4">연락처</th><th class="p-4">마지막 수거일</th><th class="p-4">상태</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b hover:bg-gray-50"><td class="p-4">사천 곤명 농가</td><td class="p-4">경남 사천시</td><td class="p-4">010-1234-5678</td><td class="p-4">2025-07-01</td><td class="p-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">정상</span></td></tr>
-                        <tr class="border-b hover:bg-gray-50"><td class="p-4">진주 수곡 농가</td><td class="p-4">경남 진주시</td><td class="p-4">010-2345-6789</td><td class="p-4">2025-06-28</td><td class="p-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">정상</span></td></tr>
-                        <tr class="border-b hover:bg-gray-50"><td class="p-4">하동 옥종 농가</td><td class="p-4">경남 하동군</td><td class="p-4">010-3456-7890</td><td class="p-4">2025-07-02</td><td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">확인필요</span></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <!-- 모바일 메뉴 토글 시 배경 -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden sm:hidden"></div>
 
-        <!-- 설정 페이지 -->
-        <div id="settings-page" class="page-content">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8">설정</h2>
-            <div class="bg-white p-6 rounded-xl shadow-md max-w-2xl">
-                <h3 class="text-xl font-bold text-gray-800 mb-6">프로필 설정</h3>
-                <div class="space-y-4">
-                    <div><label class="block text-sm font-medium text-gray-700">이름</label><input type="text" value="황진경" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div>
-                    <div><label class="block text-sm font-medium text-gray-700">이메일</label><input type="email" value="d4avidh@naver.com" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div>
-                    <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">저장</button>
+        <!-- 메인 콘텐츠 -->
+        <main class="flex-1 p-4 sm:p-8 sm:ml-64">
+            <!-- 모바일 헤더 -->
+            <header class="sm:hidden flex justify-between items-center mb-4">
+                <button id="mobile-menu-btn" class="p-2">
+                    <i data-lucide="menu" class="w-6 h-6 text-gray-800"></i>
+                </button>
+                <h1 class="text-xl font-bold text-gray-800">두레팜</h1>
+                <div class="w-8"></div> <!-- 오른쪽 공간 확보용 -->
+            </header>
+
+            <!-- 대시보드 페이지 -->
+            <div id="dashboard-page" class="page-content">
+                <!-- 데스크탑 헤더 -->
+                <header class="hidden sm:flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800">AI 수거 통합 플랫폼</h2>
+                        <p id="last-updated" class="text-sm text-gray-500">마지막 업데이트: </p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5"></i><input type="text" placeholder="검색..." class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"></div>
+                        <button class="p-2 rounded-full hover:bg-gray-200"><i data-lucide="bell" class="text-gray-600"></i></button>
+                        <div class="flex items-center space-x-2"><img src="https://placehold.co/40x40/A7F3D0/1F2937?text=H" alt="User Avatar" class="w-10 h-10 rounded-full"><div><p class="font-semibold text-gray-700">황진경</p><p class="text-sm text-gray-500">대표</p></div></div>
+                    </div>
+                </header>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card"><div class="p-3 rounded-full bg-green-100 mr-4"><i data-lucide="package" class="w-8 h-8 text-green-600"></i></div><div><p class="text-sm text-gray-500">총 수거량 (톤)</p><p class="text-2xl font-bold text-gray-800">875</p></div></div>
+                        <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card"><div class="p-3 rounded-full bg-blue-100 mr-4"><i data-lucide="flame" class="w-8 h-8 text-blue-600"></i></div><div><p class="text-sm text-gray-500">펠릿 생산량 (톤)</p><p class="text-2xl font-bold text-gray-800">230</p></div></div>
+                        <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card"><div class="p-3 rounded-full bg-yellow-100 mr-4"><i data-lucide="truck" class="w-8 h-8 text-yellow-600"></i></div><div><p class="text-sm text-gray-500">운행 차량</p><p class="text-2xl font-bold text-gray-800">12 / 15</p></div></div>
+                        <div class="bg-white p-5 rounded-xl shadow-md flex items-center interactive-card"><div class="p-3 rounded-full bg-red-100 mr-4"><i data-lucide="leaf" class="w-8 h-8 text-red-600"></i></div><div><p class="text-sm text-gray-500">탄소 절감량 (tCO2)</p><p class="text-2xl font-bold text-gray-800">96</p></div></div>
+                    </div>
+                    <div class="lg:col-span-2 bg-white p-4 rounded-xl shadow-md h-[500px]"><div id="map"></div></div>
+                    <div class="bg-white p-6 rounded-xl shadow-md"><h3 class="text-xl font-bold text-gray-800 mb-4">실시간 수거 경로</h3><div class="space-y-4"><div class="border p-4 rounded-lg interactive-card cursor-pointer"><div class="flex justify-between items-center"><p class="font-bold text-gray-700">경남 서부권</p><span class="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">진행 중</span></div><p class="text-sm text-gray-500 mt-1">담당: 김철수 (12가 3456)</p><div class="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div class="bg-green-500 h-2.5 rounded-full" style="width: 75%"></div></div><p class="text-right text-sm text-gray-500 mt-1">7/10 농가 완료</p></div><div class="border p-4 rounded-lg interactive-card cursor-pointer"><div class="flex justify-between items-center"><p class="font-bold text-gray-700">경남 동부권</p><span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded-full">대기 중</span></div><p class="text-sm text-gray-500 mt-1">담당: 박영희 (34나 5678)</p><div class="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div class="bg-blue-500 h-2.5 rounded-full" style="width: 10%"></div></div><p class="text-right text-sm text-gray-500 mt-1">1/12 농가 완료</p></div><div class="border p-4 rounded-lg interactive-card cursor-pointer"><div class="flex justify-between items-center"><p class="font-bold text-gray-700">전남권</p><span class="text-xs font-semibold bg-gray-200 text-gray-800 px-2 py-1 rounded-full">완료</span></div><p class="text-sm text-gray-500 mt-1">담당: 이민준 (56다 7890)</p><div class="w-full bg-gray-200 rounded-full h-2.5 mt-2"><div class="bg-gray-400 h-2.5 rounded-full" style="width: 100%"></div></div><p class="text-right text-sm text-gray-500 mt-1">8/8 농가 완료</p></div></div></div>
+                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md"><h3 class="text-xl font-bold text-gray-800 mb-4">주요 생산량 추이 (단위: 톤)</h3><div class="h-80"><canvas id="productionYieldChart"></canvas></div></div>
+                    <div class="bg-white p-6 rounded-xl shadow-md"><h3 class="text-xl font-bold text-gray-800 mb-4">펠릿 재고 현황 (단위: 톤)</h3><div class="h-80"><canvas id="pelletStatesChart"></canvas></div></div>
                 </div>
             </div>
-        </div>
+            <!-- 수거 경로 페이지 --><div id="routes-page" class="page-content"><h2 class="text-3xl font-bold text-gray-800 mb-8">수거 경로 관리</h2><div class="bg-white p-4 rounded-xl shadow-md h-[70vh]"><div id="routes-map"></div></div></div>
+            <!-- 생산 분석 페이지 --><div id="analytics-page" class="page-content"><h2 class="text-3xl font-bold text-gray-800 mb-8">생산 분석</h2><div class="grid grid-cols-1 lg:grid-cols-2 gap-8"><div class="bg-white p-6 rounded-xl shadow-md"><h3 class="text-xl font-bold text-gray-800 mb-4">월별 탄소 절감량 (tCO2)</h3><div class="h-80"><canvas id="carbonReductionChart"></canvas></div></div><div class="bg-white p-6 rounded-xl shadow-md"><h3 class="text-xl font-bold text-gray-800 mb-4">펠릿 종류별 판매 현황</h3><div class="h-80"><canvas id="pelletSalesChart"></canvas></div></div></div></div>
+            <!-- 농가 관리 페이지 --><div id="farms-page" class="page-content"><h2 class="text-3xl font-bold text-gray-800 mb-8">농가 관리</h2><div class="bg-white p-6 rounded-xl shadow-md"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-gray-800">등록 농가 목록</h3><button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center"><i data-lucide="plus" class="w-5 h-5 mr-2"></i>신규 농가 등록</button></div><table class="w-full text-left"><thead><tr class="border-b"><th class="p-4">농가명</th><th class="p-4">지역</th><th class="p-4">연락처</th><th class="p-4">마지막 수거일</th><th class="p-4">상태</th></tr></thead><tbody><tr class="border-b hover:bg-gray-50"><td class="p-4">사천 곤명 농가</td><td class="p-4">경남 사천시</td><td class="p-4">010-1234-5678</td><td class="p-4">2025-07-01</td><td class="p-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">정상</span></td></tr><tr class="border-b hover:bg-gray-50"><td class="p-4">진주 수곡 농가</td><td class="p-4">경남 진주시</td><td class="p-4">010-2345-6789</td><td class="p-4">2025-06-28</td><td class="p-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">정상</span></td></tr><tr class="border-b hover:bg-gray-50"><td class="p-4">하동 옥종 농가</td><td class="p-4">경남 하동군</td><td class="p-4">010-3456-7890</td><td class="p-4">2025-07-02</td><td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">확인필요</span></td></tr></tbody></table></div></div>
+            <!-- 설정 페이지 --><div id="settings-page" class="page-content"><h2 class="text-3xl font-bold text-gray-800 mb-8">설정</h2><div class="bg-white p-6 rounded-xl shadow-md max-w-2xl"><h3 class="text-xl font-bold text-gray-800 mb-6">프로필 설정</h3><div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">이름</label><input type="text" value="황진경" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><div><label class="block text-sm font-medium text-gray-700">이메일</label><input type="email" value="d4avidh@naver.com" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"></div><button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">저장</button></div></div></div>
+        </main>
+    </div>
 
-    </main>
+    <!-- 모바일 하단 네비게이션 -->
+    <nav id="mobile-nav" class="sm:hidden fixed bottom-0 left-0 right-0 bg-gray-900 text-gray-300 flex justify-around p-2 z-50 border-t border-gray-700">
+        <a href="#" data-target="dashboard" class="nav-link flex flex-col items-center justify-center text-center w-full"><i data-lucide="layout-dashboard" class="w-6 h-6 mb-1"></i><span class="text-xs">대시보드</span></a>
+        <a href="#" data-target="routes" class="nav-link flex flex-col items-center justify-center text-center w-full"><i data-lucide="map" class="w-6 h-6 mb-1"></i><span class="text-xs">경로</span></a>
+        <a href="#" data-target="analytics" class="nav-link flex flex-col items-center justify-center text-center w-full"><i data-lucide="bar-chart-3" class="w-6 h-6 mb-1"></i><span class="text-xs">분석</span></a>
+        <a href="#" data-target="farms" class="nav-link flex flex-col items-center justify-center text-center w-full"><i data-lucide="users" class="w-6 h-6 mb-1"></i><span class="text-xs">농가</span></a>
+        <a href="#" data-target="settings" class="nav-link flex flex-col items-center justify-center text-center w-full"><i data-lucide="settings" class="w-6 h-6 mb-1"></i><span class="text-xs">설정</span></a>
+    </nav>
 
     <script>
-        // Lucide 아이콘 렌더링
-        lucide.createIcons();
-        
-        // 마지막 업데이트 시간 설정
-        document.getElementById('last-updated').textContent = `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
-
-        // --- 페이지 네비게이션 ---
-        const navLinks = document.querySelectorAll('.nav-link');
+        // --- 초기화 및 요소 선택 ---
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        const allNavLinks = document.querySelectorAll('.nav-link');
         const pages = document.querySelectorAll('.page-content');
-        let maps = {}; // 지도 인스턴스 저장 객체
+        const loader = document.getElementById('loader');
+        let maps = {};
+        let charts = {};
 
-        function initMap(containerId, center, zoom) {
-            if (maps[containerId]) {
-                return maps[containerId]; // 이미 초기화되었으면 반환
-            }
+        // --- 이벤트 리스너 ---
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('hidden-mobile');
+            sidebarBackdrop.classList.remove('hidden');
+        });
 
-            const map = L.map(containerId).setView(center, zoom);
-            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-            
-            const mapData = { map: map, osmLayer: osmLayer, hasBeenSetup: false };
-            maps[containerId] = mapData;
-            return mapData;
-        }
+        sidebarBackdrop.addEventListener('click', () => {
+            sidebar.classList.add('hidden-mobile');
+            sidebarBackdrop.classList.add('hidden');
+        });
 
-        navLinks.forEach(link => {
+        allNavLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                const targetId = link.getAttribute('data-target');
-
-                // 모든 페이지 숨기기 및 활성 클래스 제거
-                pages.forEach(page => page.classList.remove('active'));
-                navLinks.forEach(nav => {
-                    nav.classList.remove('bg-green-600', 'text-white', 'font-semibold');
-                    nav.classList.add('hover:bg-gray-700');
-                });
-
-                // 타겟 페이지 보이기 및 활성 클래스 추가
-                document.getElementById(`${targetId}-page`).classList.add('active');
-                link.classList.add('bg-green-600', 'text-white', 'font-semibold');
-                link.classList.remove('hover:bg-gray-700');
-
-                // 페이지 전환 시 지도/차트 다시 그리기
-                if (targetId === 'dashboard') {
-                    const { map: dashboardMap } = maps['map'];
-                    setTimeout(() => dashboardMap.invalidateSize(), 10);
-                }
-                if (targetId === 'routes') {
-                    const { map: routesMap, osmLayer: routesOsmLayer, hasBeenSetup } = initMap('routes-map', [35.1804, 128.0834], 9);
-                    if (!hasBeenSetup) {
-                        setupMap(routesMap, routesOsmLayer);
-                        maps['routes-map'].hasBeenSetup = true; // Mark as setup
-                    }
-                    setTimeout(() => routesMap.invalidateSize(), 10);
-                }
-                if (targetId === 'analytics') {
-                    initAnalyticsCharts();
+                handleNavigation(link.getAttribute('data-target'));
+                // 모바일에서 메뉴 클릭 시 사이드바 닫기
+                if (window.innerWidth < 640) {
+                    sidebar.classList.add('hidden-mobile');
+                    sidebarBackdrop.classList.add('hidden');
                 }
             });
         });
 
-        // --- 지도 (Leaflet.js) 설정 ---
-        const farms = [
-            { name: "사천시 곤명면 농가", lat: 35.088, lng: 128.085, status: "수거 완료" },
-            { name: "진주시 수곡면 농가", lat: 35.192, lng: 128.013, status: "수거 예정" },
-            { name: "하동군 옥종면 농가", lat: 35.153, lng: 127.931, status: "수거 예정" },
-            { name: "산청군 단성면 농가", lat: 35.263, lng: 128.061, status: "수거 예정" },
-            { name: "함양군 유림면 농가", lat: 35.438, lng: 127.876, status: "수거 예정" }
-        ];
-        const routeLatLngs = farms.map(farm => [farm.lat, farm.lng]);
+        // --- 함수 ---
+        function handleNavigation(targetId) {
+            // 모든 페이지 숨기기
+            pages.forEach(page => page.classList.remove('active'));
+            // 타겟 페이지만 보이기
+            document.getElementById(`${targetId}-page`).classList.add('active');
 
-        function setupMap(mapInstance, osmLayer) {
-            const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri'
+            // 모든 네비게이션 링크 스타일 초기화 및 활성 링크 스타일 적용
+            updateNavStyles(targetId);
+
+            // 페이지별 초기화 함수 호출
+            switch (targetId) {
+                case 'dashboard':
+                    const { map: dashboardMap } = maps['map'];
+                    setTimeout(() => dashboardMap.invalidateSize(), 10);
+                    break;
+                case 'routes':
+                    const { map: routesMap } = initMap('routes-map');
+                    setTimeout(() => routesMap.invalidateSize(), 10);
+                    break;
+                case 'analytics':
+                    initAnalyticsCharts();
+                    break;
+            }
+        }
+
+        function updateNavStyles(activeTarget) {
+            allNavLinks.forEach(nav => {
+                const linkTarget = nav.getAttribute('data-target');
+                const textElement = nav.querySelector('span') || nav;
+                
+                if (linkTarget === activeTarget) {
+                    nav.classList.add('text-green-400');
+                    nav.classList.remove('text-gray-300', 'hover:bg-gray-700');
+                    if (nav.parentElement.parentElement.id === 'sidebar-nav') {
+                         nav.classList.add('bg-green-600', 'text-white', 'font-semibold');
+                    }
+                } else {
+                    nav.classList.remove('text-green-400', 'bg-green-600', 'text-white', 'font-semibold');
+                    nav.classList.add('text-gray-300');
+                     if (nav.parentElement.parentElement.id === 'sidebar-nav') {
+                         nav.classList.add('hover:bg-gray-700');
+                    }
+                }
             });
-            
-            // FIX: Correctly create the baseMaps object using the passed osmLayer
-            const baseMaps = { "일반 지도": osmLayer, "위성 지도": satelliteLayer };
-            L.control.layers(baseMaps).addTo(mapInstance);
+        }
 
+        function initMap(containerId) {
+            if (maps[containerId]) return maps[containerId];
+
+            const map = L.map(containerId).setView([35.1804, 128.0834], 9);
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+            
+            const mapData = { map, osmLayer, isSetup: false };
+            maps[containerId] = mapData;
+
+            if (!mapData.isSetup) {
+                setupMapFeatures(map);
+                mapData.isSetup = true;
+            }
+            return mapData;
+        }
+
+        function setupMapFeatures(mapInstance) {
             const farmIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#22c55e" width="32px" height="32px"><path d="M21.6,8.2C21.6,8.2,21.6,8.2,21.6,8.2c-0.2-1.9-1.1-3.7-2.6-5.2C17.6,1.6,15.8,0.7,13.8,0.4c-0.1,0-0.2,0-0.3,0 c-0.5,0-1,0-1.5,0.1C9.4,0.7,7,2.2,5.4,4.6C3.9,7,3.9,9.9,5.4,12.3c0,0,0,0,0,0l0,0c1.1,1.8,2.8,3,4.8,3.5V19c0,1.1,0.9,2,2,2h0 c1.1,0,2-0.9,2-2v-3.5c2-0.5,3.7-1.7,4.8-3.5l0,0C20.5,10.6,21.2,9.4,21.6,8.2z"/></svg>`;
             const truckIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 40" fill="#3B82F6" width="40px" height="40px"><path d="M62,28.8H50.2v-5h4.4V19h-4.4v-5h10.6c1.1,0,2-0.9,2-2s-0.9-2-2-2H48.8V5c0-1.1-0.9-2-2-2H2.2C1,3,0,3.9,0,5v23.8 C0,29.9,0.9,31,2,31h6.4c0.8,4.5,4.6,8,9.4,8s8.6-3.5,9.4-8h13.1c0.8,4.5,4.6,8,9.4,8s8.6-3.5,9.4-8H62c1.1,0,2-0.9,2-2 S63.1,28.8,62,28.8z M21.8,35c-2.2,0-4-1.8-4-4s1.8-4,4-4s4,1.8,4,4S24,35,21.8,35z M49.8,35c-2.2,0-4-1.8-4-4s1.8-4,4-4s4,1.8,4,4 S52,35,49.8,35z M4,28.8V5h40.8v23.8H4z"/></svg>`;
             const farmIcon = L.icon({ iconUrl: `data:image/svg+xml;base64,${btoa(farmIconSVG)}`, iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32] });
             const truckIcon = L.icon({ iconUrl: `data:image/svg+xml;base64,${btoa(truckIconSVG)}`, iconSize: [40, 40], iconAnchor: [20, 20], popupAnchor: [0, -20] });
 
-            farms.forEach(farm => L.marker([farm.lat, farm.lng], { icon: farmIcon }).addTo(mapInstance).bindPopup(`<b>${farm.name}</b><br>${farm.status}`));
-            const route = L.polyline(routeLatLngs, { color: 'blue', weight: 5, opacity: 0.7, dashArray: '10, 5' }).addTo(mapInstance);
-            const truckMarker = L.marker(routeLatLngs[0], { icon: truckIcon }).addTo(mapInstance).bindPopup('<b>경남 서부권 수거 차량</b>');
-            mapInstance.fitBounds(route.getBounds().pad(0.1));
+            const farms = [
+                { name: "사천시 곤명면 농가", lat: 35.088, lng: 128.085 }, { name: "진주시 수곡면 농가", lat: 35.192, lng: 128.013 },
+                { name: "하동군 옥종면 농가", lat: 35.153, lng: 127.931 }, { name: "산청군 단성면 농가", lat: 35.263, lng: 128.061 },
+                { name: "함양군 유림면 농가", lat: 35.438, lng: 127.876 }
+            ];
+            const routeLatLngs = farms.map(farm => [farm.lat, farm.lng]);
+
+            farms.forEach(farm => L.marker([farm.lat, farm.lng], { icon: farmIcon }).addTo(mapInstance).bindPopup(`<b>${farm.name}</b>`));
+            L.polyline(routeLatLngs, { color: 'blue', weight: 5, opacity: 0.7, dashArray: '10, 5' }).addTo(mapInstance);
+            L.marker(routeLatLngs[0], { icon: truckIcon }).addTo(mapInstance).bindPopup('<b>수거 차량</b>');
+            mapInstance.fitBounds(L.polyline(routeLatLngs).getBounds().pad(0.1));
         }
 
-        // --- 차트 (Chart.js) 설정 ---
-        let charts = {};
         function initDashboardCharts() {
             if (charts['production']) return;
             const productionCtx = document.getElementById('productionYieldChart').getContext('2d');
@@ -334,14 +288,18 @@
             charts['sales'] = new Chart(salesCtx, { type: 'pie', data: { labels: ['산업용', '가정용', '반려동물용'], datasets: [{ data: [350, 120, 80], backgroundColor: ['rgba(34, 197, 94, 0.8)', 'rgba(59, 130, 246, 0.8)', 'rgba(251, 146, 60, 0.8)'] }] }, options: { responsive: true, maintainAspectRatio: false } });
         }
 
-        // 초기 페이지 로드
+        // --- 초기 페이지 로드 ---
         window.onload = () => {
-            const { map: dashboardMap, osmLayer: dashboardOsmLayer } = initMap('map', [35.1804, 128.0834], 9);
-            setupMap(dashboardMap, dashboardOsmLayer);
-            maps['map'].hasBeenSetup = true; // Mark as setup
+            lucide.createIcons();
+            document.getElementById('last-updated').textContent = `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
+            
+            initMap('map');
             initDashboardCharts();
+            updateNavStyles('dashboard');
+            
+            // 로딩 스피너 숨기기
+            loader.style.display = 'none';
         };
-
     </script>
 </body>
 </html>
