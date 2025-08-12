@@ -1,0 +1,158 @@
+/* General body and html styling */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+/* Map container styling */
+#map {
+    height: 100%;
+    width: 100%;
+    background-color: #eaf2f8; /* Light blue background for map loading */
+}
+
+/* Header overlay styling */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+    color: white;
+    padding: 15px 20px;
+    z-index: 1000; /* Ensure header is on top of the map */
+    display: flex;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    flex-grow: 1;
+    text-align: center;
+}
+
+.back-button {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    position: absolute;
+    left: 20px;
+}
+
+/* Panel styling (for alerts) */
+.panel {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+    width: 300px;
+    max-width: 85%;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.panel-header i {
+    color: #d97706; /* Amber color for the bell icon */
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.panel-content {
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.alert-item, .alert-item-static {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 4px solid;
+}
+
+.alert-item {
+    background-color: #fffbeb; /* Light yellow background */
+    border-color: #f59e0b; /* Yellow border */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.alert-item:hover {
+    background-color: #fef3c7; /* Darker yellow on hover */
+}
+
+.alert-item-static {
+    background-color: #f0f4f8;
+    border-color: #64748b;
+}
+
+.alert-item strong, .alert-item-static strong {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.alert-item p, .alert-item-static p {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #475569;
+}
+
+/* Loading overlay styling */
+.loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* Highest z-index */
+    transition: opacity 0.5s ease;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+.loader-overlay p {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

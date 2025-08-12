@@ -1,0 +1,92 @@
+/* General body styling */
+body {
+    margin: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f0f4f8; /* Light blue-gray background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+}
+
+/* Main container styling */
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+}
+
+/* Logo icon styling */
+.logo-icon {
+    font-size: 48px;
+    color: #2c5282; /* Deep blue from the proposal */
+    margin-bottom: 20px;
+}
+
+/* Title styling */
+.title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748; /* Darker gray-blue */
+    margin-bottom: 10px;
+}
+
+/* Subtitle styling */
+.subtitle {
+    font-size: 16px;
+    color: #718096; /* Lighter gray */
+    margin-bottom: 30px;
+}
+
+/* Button container */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between buttons */
+}
+
+/* Common button styling */
+.role-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    width: 100%;
+}
+
+.role-button i {
+    margin-right: 10px;
+}
+
+/* Specific button styling */
+#adminBtn {
+    background-color: #3182ce; /* Blue for admin */
+}
+
+#adminBtn:hover {
+    background-color: #2b6cb0; /* Darker blue on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(49, 130, 206, 0.4);
+}
+
+#companyBtn {
+    background-color: #38a169; /* Green for company */
+}
+
+#companyBtn:hover {
+    background-color: #2f855a; /* Darker green on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(56, 161, 105, 0.4);
+}

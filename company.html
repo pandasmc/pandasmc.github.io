@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>업체용 모바일 앱</title>
+
+    <!-- Google Fonts: Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Leaflet CSS for Interactive Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="company.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Header -->
+        <header class="app-header">
+            <a href="index.html" class="back-button"><i class="fas fa-arrow-left"></i></a>
+            <h1>강원임업 솔루션</h1>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tabs">
+            <button id="routeTabBtn" class="tab-button active" data-target="routePlannerSection">
+                <i class="fas fa-route"></i> 경로 최적화
+            </button>
+            <button id="aiTabBtn" class="tab-button" data-target="aiChatSection">
+                <i class="fas fa-robot"></i> AI 비서
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <!-- Route Planner Section -->
+            <section id="routePlannerSection" class="tab-content active">
+                <div class="route-inputs">
+                    <div class="input-group">
+                        <label><i class="fas fa-map-marker-alt"></i> 출발지</label>
+                        <input type="text" value="강원도 춘천시">
+                    </div>
+                    <div id="waypoints-container">
+                        <!-- Dynamic waypoints will be added here -->
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fas fa-flag-checkered"></i> 도착지</label>
+                        <input type="text" value="충청남도 당진시">
+                    </div>
+                    <button id="addWaypointBtn" class="control-button">
+                        <i class="fas fa-plus-circle"></i> 경유지 추가
+                    </button>
+                </div>
+                <button id="findRouteBtn" class="action-button">
+                    <i class="fas fa-search-location"></i> 최적 경로 탐색
+                </button>
+                <div id="routeMap"></div>
+                <div id="routeInfo" class="info-box">
+                    <p>경로 정보를 보려면 '최적 경로 탐색'을 클릭하세요.</p>
+                </div>
+            </section>
+
+            <!-- AI Chat Section -->
+            <section id="aiChatSection" class="tab-content">
+                <div class="chat-window">
+                    <!-- Chat messages will be appended here -->
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="음성 입력으로 질문하세요...">
+                    <button id="sendBtn"><i class="fas fa-microphone"></i></button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="company.js"></script>
+</body>
+</html>
