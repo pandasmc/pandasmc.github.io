@@ -16,6 +16,7 @@
         <!-- Global Navigation Bar -->
         <header class="gnb">
             <div class="gnb-left">
+                <!-- [수정] 로고 이미지 경로를 'img/로고.png'로 변경 -->
                 <img src="img/로고.png" alt="로고" class="gnb-logo">
                 <h1>산림자원 통합관제시스템</h1>
             </div>
@@ -25,7 +26,7 @@
                     <i class="fas fa-user-circle"></i>
                     <span>산림청 박 주무관</span>
                 </div>
-                <a href="index.html" class="home-button" title="메인으로 돌아가기"><i class="fas fa-sign-out-alt"></i></a>
+                <a href="#" class="home-button" title="메인으로 돌아가기"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </header>
 
@@ -42,22 +43,22 @@
                         <span class="kpi-label">금일 활동 자산</span>
                         <span class="kpi-value accent-green" id="kpi-active-vehicles">41 <small>대</small></span>
                     </div>
-                    <div class="kpi-item">
+                     <div class="kpi-item">
                         <span class="kpi-label">금일 위반 의심</span>
                         <span class="kpi-value accent-red" id="kpi-violations">0 <small>건</small></span>
                     </div>
                 </div>
             </div>
             <div class="widget">
-                <h2 class="widget-title">주간 수집량 (톤)</h2>
-                <div class="chart-container small-chart">
-                    <canvas id="weekly-collection-chart"></canvas>
+                <h2 class="widget-title">금일 수집 자원 유형</h2>
+                <div class="chart-container doughnut-chart">
+                    <canvas id="resource-type-chart"></canvas>
                 </div>
             </div>
             <div class="widget flex-grow">
                 <h2 class="widget-title">실시간 이벤트 로그</h2>
                 <ul id="event-log" class="event-log">
-                    <!-- Event logs will be injected here -->
+                    <!-- Event logs will be injected here by JS -->
                 </ul>
             </div>
         </aside>
@@ -80,7 +81,7 @@
                 </div>
             </div>
             <div id="dynamic-widget-area" class="widget flex-grow">
-                 <!-- Dynamic widgets will be injected here: Chatbot or Scenario Widgets -->
+                 <!-- Dynamic widgets will be injected here by JS -->
             </div>
         </aside>
     </div>
@@ -93,9 +94,8 @@
                 <button id="modal-close-btn" class="modal-close-btn"><i class="fas fa-times"></i></button>
             </div>
             <div id="modal-body" class="modal-body">
-                <!-- Video tag for drone feed -->
-                <video id="drone-video" loop muted playsinline class="hidden"></video>
-                <!-- Image tag for CCTV feed -->
+                <!-- [수정] 드론 비디오 경로를 'img/드론영상.mp4'로 변경. src는 JS에서 동적으로 제어됩니다. -->
+                <video id="drone-video" loop muted playsinline class="hidden" type="video/mp4"></video>
                 <img id="cctv-image" src="https://placehold.co/600x400/333333/FFFFFF?text=CCTV+Feed" alt="CCTV Feed" class="hidden">
             </div>
         </div>
