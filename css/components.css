@@ -1,7 +1,7 @@
-/*
-  공통 컴포넌트 스타일시트 (components.css)
-  - AI 챗봇 등 여러 페이지에서 사용되는 요소들을 정의합니다.
-*/
+/* =================================================================
+   공통 컴포넌트 스타일시트 (components.css - 개선 버전)
+   - AI 챗봇 등 여러 페이지에서 사용되는 요소들을 정의합니다.
+   ================================================================= */
 
 /* 챗봇 플로팅 버튼 */
 .chatbot-fab {
@@ -10,17 +10,17 @@
     right: 25px;
     width: 60px;
     height: 60px;
-    background-color: var(--primary-color);
-    color: var(--white-color);
+    background: linear-gradient(45deg, var(--primary-color), #00796B);
+    color: var(--surface-color);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 28px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-md);
     cursor: pointer;
-    z-index: 999;
-    transition: transform 0.3s;
+    z-index: 1001; /* 다른 요소들 위에 보이도록 */
+    transition: transform 0.3s ease-in-out;
 }
 
 .chatbot-fab:hover {
@@ -33,24 +33,26 @@
     bottom: 100px;
     right: 25px;
     width: 90%;
-    max-width: 380px;
-    height: 500px;
-    background-color: var(--white-color);
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    height: 65vh;
+    max-height: 550px;
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    z-index: 998;
+    z-index: 1000;
     /* 초기에는 숨김, JS로 제어 */
     display: none; 
+    transition: all 0.3s ease-in-out;
 }
 
 /* 채팅창 헤더 */
 .chat-header {
     padding: 15px 20px;
     background-color: var(--primary-color);
-    color: var(--white-color);
+    color: var(--surface-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -59,14 +61,17 @@
 
 .chat-header h3 {
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .chat-header .close-btn {
     font-size: 20px;
-    cursor: pointer;
-    background: none;
-    color: var(--white-color);
+    color: var(--surface-color);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+.chat-header .close-btn:hover {
+    opacity: 1;
 }
 
 /* 메시지 영역 */
@@ -74,20 +79,26 @@
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
-    background-color: #f4f7f6;
+    background-color: var(--background-color);
 }
 
 .message {
     display: flex;
     margin-bottom: 15px;
     max-width: 85%;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .message-content {
-    padding: 10px 15px;
-    border-radius: 18px;
-    font-size: 14px;
-    line-height: 1.5;
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-size: 15px;
+    line-height: 1.6;
 }
 
 /* 봇 메시지 스타일 */
@@ -95,9 +106,9 @@
     justify-content: flex-start;
 }
 .message.bot .message-content {
-    background-color: #e9ecef;
-    color: #333;
-    border-bottom-left-radius: 4px;
+    background-color: #E9ECEF;
+    color: var(--text-primary);
+    border-bottom-left-radius: 5px;
 }
 
 /* 사용자 메시지 스타일 */
@@ -107,33 +118,54 @@
 }
 .message.user .message-content {
     background-color: var(--secondary-color);
-    color: var(--white-color);
-    border-bottom-right-radius: 4px;
+    color: var(--surface-color);
+    border-bottom-right-radius: 5px;
 }
 
 /* 입력 폼 영역 */
-.chat-input-form {
+#chat-input-form {
     display: flex;
-    padding: 10px;
+    align-items: center;
+    padding: 10px 15px;
     border-top: 1px solid var(--border-color);
+    background-color: var(--surface-color);
     flex-shrink: 0;
 }
 
-.chat-input-form input {
+#chat-input-form .input-wrapper {
+    position: relative;
     flex-grow: 1;
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 10px 15px;
-    font-size: 14px;
-}
-.chat-input-form input:focus {
-    outline: none;
-    border-color: var(--primary-color);
 }
 
-.chat-input-form button {
-    background: none;
-    font-size: 20px;
+#chat-input {
+    width: 100%;
+    padding: 12px 45px 12px 20px; /* 마이크 아이콘 공간 확보 */
+    border: 1px solid var(--border-color);
+    border-radius: 22px;
+    font-size: 15px;
+    background-color: var(--background-color);
+}
+#chat-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.mic-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+.mic-btn:hover {
     color: var(--primary-color);
+}
+
+.send-btn {
+    font-size: 22px;
+    color: var(--secondary-color);
     margin-left: 10px;
+    padding: 8px;
 }

@@ -1,89 +1,121 @@
 /*
-  로그인 페이지 전용 스타일시트 (login.css)
+  로그인 페이지 전용 스타일시트 (login.css - 리뉴얼 버전)
 */
 
-.login-container {
+.login-wrapper {
     width: 100%;
-    max-width: 400px;
-    padding: 20px;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 고화질 배경 이미지 설정 */
+    background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop') no-repeat center center;
+    background-size: cover;
+    position: relative;
+}
+
+/* 배경 위 어두운 오버레이 추가하여 가독성 확보 */
+.login-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.login-container {
+    position: relative;
+    z-index: 1;
+    width: 90%;
+    max-width: 420px;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.95); /* 살짝 투명한 흰색 배경 */
+    backdrop-filter: blur(10px); /* 배경 블러 효과 */
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.login-box {
-    background-color: var(--white-color);
-    padding: 40px 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.logo h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 8px;
-}
-
-.subtitle {
-    font-size: 14px;
-    color: var(--secondary-color);
+.login-header {
     margin-bottom: 30px;
 }
 
-.login-form {
-    display: flex;
-    flex-direction: column;
+.login-header .fa-tree {
+    font-size: 36px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.login-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    font-size: 16px;
+    color: var(--text-secondary);
 }
 
 .input-group {
+    position: relative;
     margin-bottom: 20px;
-    text-align: left;
 }
 
-.input-group label {
-    display: block;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: var(--text-color);
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
 }
 
 .input-group input {
     width: 100%;
-    padding: 12px 15px;
+    padding: 15px 15px 15px 45px; /* 아이콘 공간 확보 */
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
-    transition: border-color 0.3s;
+    background-color: var(--background-color);
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .input-group input:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 77, 64, 0.1);
 }
 
 .error-message {
-    color: var(--error-color);
-    font-size: 13px;
-    height: 16px;
+    color: var(--accent-red);
+    font-size: 14px;
+    height: 20px;
     margin-bottom: 10px;
 }
 
 .login-button {
-    background-color: var(--primary-color);
-    color: var(--white-color);
-    padding: 14px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    transition: background-color 0.3s;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(45deg, var(--primary-color), #00796B);
+    color: var(--surface-color);
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-md);
 }
 
 .login-button:hover {
-    background-color: #1e4231; /* 더 짙은 녹색 */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
-.footer {
+.login-footer {
     margin-top: 30px;
     font-size: 12px;
-    color: #999;
+    color: var(--text-secondary);
 }

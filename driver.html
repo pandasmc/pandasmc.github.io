@@ -2,125 +2,111 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>작업 관리 - 산림자원 AI 플랫폼</title>
-    <!-- 공통 스타일시트 -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- 운전자 페이지 전용 스타일시트 -->
-    <link rel="stylesheet" href="css/driver.css">
-    <!-- 공통 컴포넌트 스타일시트 (다음 단계에서 생성) -->
-    <link rel="stylesheet" href="css/components.css">
+
+    <!-- Leaflet.js 라이브러리 (지도) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <!-- Font Awesome 아이콘 라이브러리 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 공통 스타일시트 (개선 버전) -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 운전자 페이지 전용 스타일시트 (개선 버전) -->
+    <link rel="stylesheet" href="css/driver.css">
+    <!-- 공통 컴포넌트 스타일시트 (개선 버전) -->
+    <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <div class="driver-container">
+    <div class="driver-wrapper">
         <!-- 헤더 -->
         <header class="header">
             <div class="user-profile">
-                <i class="fa-solid fa-user-circle"></i>
-                <span>강원임업 (driver)</span>
+                <img src="https://placehold.co/40x40/EFEFEF/333?text=K" alt="User Avatar" class="avatar">
+                <div class="user-info">
+                    <strong>김대표 (강원임업)</strong>
+                    <span>차량: 89나0123</span>
+                </div>
             </div>
-            <a href="index.html" class="logout-button"><i class="fa-solid fa-right-from-bracket"></i></a>
+            <a href="index.html" class="logout-button" title="로그아웃"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
         </header>
 
-        <!-- 현재 작업 상태 -->
-        <section class="status-section">
-            <h2 id="current-status">대기 중</h2>
-            <p>다음 작업을 준비해주세요.</p>
-        </section>
+        <!-- 메인 콘텐츠 -->
+        <main class="driver-main">
+            <!-- 경로 최적화 섹션 -->
+            <section class="optimizer-section">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-route"></i> 최적 경로 탐색</h2>
+                </div>
+                <div class="panel-content">
+                    <form id="optimizer-form">
+                        <div class="location-grid">
+                            <div class="form-group">
+                                <label for="stop-1"><span class="label-badge">1</span> 수집처</label>
+                                <input type="text" id="stop-1" value="진주 수목원">
+                            </div>
+                            <div class="form-group">
+                                <label for="stop-2"><span class="label-badge">2</span> 수집처</label>
+                                <input type="text" id="stop-2" value="사천 KAI">
+                            </div>
+                            <div class="form-group">
+                                <label for="stop-3"><span class="label-badge">3</span> 수집처</label>
+                                <input type="text" id="stop-3" value="고성 공룡엑스포">
+                            </div>
+                            <div class="form-group">
+                                <label for="stop-4"><span class="label-badge">4</span> 수집처</label>
+                                <input type="text" id="stop-4" value="하동 삼성궁">
+                            </div>
+                        </div>
+                        <button type="submit" id="optimize-route-button" class="btn-optimize">
+                            최적 경로 탐색
+                        </button>
+                    </form>
+                </div>
+            </section>
 
-        <!-- 경로 안내 지도 -->
-        <section class="map-section">
-            <div class="map-view">
-                <img src="https://placehold.co/600x400/A2B2A8/333333?text=Route+Guidance+Map" alt="경로 안내 지도" class="map-background">
-            </div>
-        </section>
-
-        <!-- 경로 정보 -->
-        <section class="info-section">
-            <div class="info-item">
-                <i class="fa-solid fa-gas-pump"></i>
-                <span>예상 유류비 <strong>-3,500원</strong> 절감</span>
-            </div>
-            <div class="info-item">
-                <i class="fa-solid fa-clock"></i>
-                <span>예상 시간 <strong>-15분</strong> 단축</span>
-            </div>
-        </section>
-
-        <!-- 기능 버튼 그룹 -->
-        <section class="button-group">
-            <button id="toggle-work-button" class="btn btn-primary">
-                <i class="fa-solid fa-play"></i> 작업 시작
-            </button>
-            <button id="open-modal-button" class="btn btn-secondary">
-                <i class="fa-solid fa-camera"></i> 현장 데이터 입력
-            </button>
-        </section>
+            <!-- 결과 표시 섹션 -->
+            <section class="result-section">
+                <div id="map-container">
+                    <!-- 로딩 스피너 (초기에는 숨김) -->
+                    <div id="loading-spinner" class="loading-spinner" style="display: none;"></div>
+                    <!-- Leaflet 지도가 표시될 곳 -->
+                    <div id="map"></div>
+                </div>
+                <div id="route-summary" class="route-summary">
+                    <!-- JS로 요약 정보가 채워질 공간 -->
+                </div>
+            </section>
+        </main>
     </div>
 
-    <!-- 데이터 입력 모달 (초기에는 숨김) -->
-    <div id="data-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <h2>현장 데이터 입력</h2>
-            <form id="data-form">
-                <div class="form-group">
-                    <label for="volume">처리량 (톤)</label>
-                    <input type="number" id="volume" placeholder="예: 15.5">
-                </div>
-                <div class="form-group">
-                    <label for="photo">현장 사진 첨부</label>
-                    <button type="button" class="btn-upload"><i class="fa-solid fa-camera"></i> 사진 촬영</button>
-                </div>
-                <div class="modal-buttons">
-                    <button type="button" id="close-modal-button" class="btn btn-secondary">취소</button>
-                    <button type="submit" class="btn btn-primary">제출</button>
-                </div>
-            </form>
-            <p id="success-message" class="success-message" style="display: none;">
-                <i class="fa-solid fa-check-circle"></i> 성공적으로 제출되었습니다.
-            </p>
-        </div>
-    </div>
-        <!-- 
-    AI 챗봇 컴포넌트
-    - 이 코드를 <body> 태그가 끝나기 직전에 추가합니다.
-    -->
+    <!-- AI 챗봇 컴포넌트 -->
     <div class="chatbot-container">
-        <!-- 플로팅 버튼 -->
         <div id="chatbot-fab" class="chatbot-fab">
             <i class="fa-solid fa-robot"></i>
         </div>
-
-        <!-- 채팅창 (초기에는 숨김) -->
         <div id="chat-window" class="chat-window">
-            <!-- 헤더 -->
             <div class="chat-header">
                 <h3>AI 비서</h3>
                 <button id="close-chat-btn" class="close-btn"><i class="fa-solid fa-times"></i></button>
             </div>
-            
-            <!-- 메시지 표시 영역 -->
             <div id="chat-messages" class="chat-messages">
-                <!-- 시연용 초기 메시지 -->
-                <div class="message bot">
-                    <div class="message-content">
-                        안녕하세요! 무엇을 도와드릴까요? <br> (예: 오늘 정산액 알려줘)
-                    </div>
-                </div>
+                <div class="message bot"><div class="message-content">안녕하세요, 김대표님! 무엇을 도와드릴까요?</div></div>
             </div>
-
-            <!-- 사용자 입력 폼 -->
             <form id="chat-input-form" class="chat-input-form">
-                <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
-                <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+                <div class="input-wrapper">
+                    <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
+                    <button type="button" id="mic-btn" class="mic-btn"><i class="fa-solid fa-microphone"></i></button>
+                </div>
+                <button type="submit" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
             </form>
         </div>
     </div>
 
-
-    <!-- 운전자 페이지 시뮬레이션 스크립트 (다음 단계에서 생성) -->
+    <!-- 스크립트 파일들 -->
     <script src="js/driver.js"></script>
+    <script src="js/components.js"></script>
 </body>
 </html>

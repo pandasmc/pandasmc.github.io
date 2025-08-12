@@ -4,116 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>통합 관제 대시보드 - 산림자원 AI 플랫폼</title>
-    <!-- 공통 스타일시트 -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- 대시보드 페이지 전용 스타일시트 -->
-    <link rel="stylesheet" href="css/dashboard.css">
-    <!-- 공통 컴포넌트 스타일시트 (다음 단계에서 생성) -->
-    <link rel="stylesheet" href="css/components.css">
+
+    <!-- Leaflet.js 라이브러리 (지도) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <!-- Font Awesome 아이콘 라이브러리 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 공통 스타일시트 (개선 버전) -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 대시보드 페이지 전용 스타일시트 (개선 버전) -->
+    <link rel="stylesheet" href="css/dashboard.css">
+    <!-- 공통 컴포넌트 스타일시트 (개선 버전) -->
+    <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-    <div class="dashboard-container">
+    <div class="dashboard-wrapper">
         <!-- 헤더 -->
         <header class="header">
             <div class="logo">
-                <h1>통합 관제 대시보드</h1>
+                <i class="fa-solid fa-tree"></i>
+                <h1>산림자원 통합 관제</h1>
             </div>
             <div class="user-profile">
-                <span>박주무관 (admin)</span>
-                <a href="index.html" class="logout-button">로그아웃</a>
+                <div class="user-info">
+                    <strong>박주무관</strong>
+                    <span>산림청</span>
+                </div>
+                <img src="https://placehold.co/40x40/EFEFEF/333?text=P" alt="User Avatar" class="avatar">
+                <a href="index.html" class="logout-button" title="로그아웃"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
             </div>
         </header>
 
-        <!-- 메인 콘텐츠 -->
-        <main class="main-content">
-            <!-- 핵심 지표 (KPI) -->
-            <section class="kpi-section">
-                <div class="kpi-card">
-                    <h3>총 수집량</h3>
-                    <p>5,240 <span>톤</span></p>
+        <!-- 메인 대시보드 영역 (3단 레이아웃) -->
+        <main class="dashboard-main">
+            <!-- 좌측 패널: 실시간 현황 KPI -->
+            <div class="dashboard-panel left-panel">
+                <div class="panel-header">
+                    <h2>실시간 현황</h2>
                 </div>
-                <div class="kpi-card">
-                    <h3>운행 차량</h3>
-                    <p>27 <span>대</span></p>
-                </div>
-                <div class="kpi-card">
-                    <h3>입고 현황</h3>
-                    <p>3,780 <span>톤</span></p>
-                </div>
-            </section>
-
-            <!-- 지도 및 관제 -->
-            <section class="map-section">
-                <div id="map" class="map-view">
-                    <!-- 시연용 지도 배경 이미지 -->
-                    <img src="https://placehold.co/800x600/A2B2A8/333333?text=GIS+Map+Background" alt="지도 배경" class="map-background">
-                    
-                    <!-- 시뮬레이션용 차량 및 경고 아이콘 (JS로 제어) -->
-                    <div id="vehicle-icon" class="vehicle-icon" style="top: 40%; left: 55%;">
-                        <i class="fa-solid fa-truck"></i>
+                <div class="panel-content">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <i class="fa-solid fa-cubes-stacked kpi-icon" style="color: #28a745;"></i>
+                            <div class="kpi-text">
+                                <p class="kpi-value">5,240 <span>톤</span></p>
+                                <p class="kpi-title">총 수집량</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <i class="fa-solid fa-truck kpi-icon" style="color: #007bff;"></i>
+                            <div class="kpi-text">
+                                <p class="kpi-value">27 <span>대</span></p>
+                                <p class="kpi-title">운행 차량</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <i class="fa-solid fa-industry kpi-icon" style="color: #6f42c1;"></i>
+                            <div class="kpi-text">
+                                <p class="kpi-value">3,780 <span>톤</span></p>
+                                <p class="kpi-title">발전소 입고량</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <i class="fa-solid fa-triangle-exclamation kpi-icon" style="color: #fd7e14;"></i>
+                            <div class="kpi-text">
+                                <p class="kpi-value">2 <span>건</span></p>
+                                <p class="kpi-title">이상 징후</p>
+                            </div>
+                        </div>
                     </div>
-                    <div id="alert-icon" class="alert-icon" style="top: 65%; left: 30%; display: none;">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- 이상 징후 목록 -->
-            <section class="alert-section">
-                <h2><i class="fa-solid fa-bell"></i> 이상 징후 실시간 알림</h2>
+            <!-- 중앙 패널: 지도 -->
+            <div class="dashboard-panel center-panel">
+                <div id="map"></div>
+            </div>
+
+            <!-- 우측 패널: 이상 징후 알림 -->
+            <div class="dashboard-panel right-panel">
+                <div class="panel-header">
+                    <h2>이상 징후 알림</h2>
+                    <span class="badge">2</span>
+                </div>
                 <ul class="alert-list">
-                    <li class="alert-item" data-lat="65" data-lng="30">
-                        <span class="alert-type warning">경로 이탈</span>
-                        <span class="alert-info">차량 12가3456, 허가 경로 50m 이탈</span>
+                    <li class="alert-item" data-lat="35.1595" data-lon="128.0833" data-vehicle-id="1">
+                        <div class="alert-icon-wrapper warning">
+                            <i class="fa-solid fa-route"></i>
+                        </div>
+                        <div class="alert-text">
+                            <p class="alert-title">경로 이탈 의심</p>
+                            <p class="alert-desc">차량 12가3456, 허가 경로 50m 이탈</p>
+                        </div>
                         <span class="alert-time">방금 전</span>
                     </li>
-                    <li class="alert-item" data-lat="30" data-lng="70">
-                        <span class="alert-type critical">장기 체류</span>
-                        <span class="alert-info">차량 89나0123, 허가 구역 외 30분 이상 체류</span>
+                    <li class="alert-item active" data-lat="35.0555" data-lon="128.4334" data-vehicle-id="2">
+                        <div class="alert-icon-wrapper critical">
+                            <i class="fa-solid fa-stopwatch"></i>
+                        </div>
+                        <div class="alert-text">
+                            <p class="alert-title">허가 구역 외 장기 체류</p>
+                            <p class="alert-desc">차량 89나0123, 30분 이상 체류</p>
+                        </div>
                         <span class="alert-time">5분 전</span>
                     </li>
-                    <li class="alert-item">
-                        <span class="alert-type info">속도 위반</span>
-                        <span class="alert-info">차량 45다6789, 임도 구간 과속 감지</span>
+                    <li class="alert-item" data-lat="35.1983" data-lon="128.1583" data-vehicle-id="3">
+                        <div class="alert-icon-wrapper info">
+                            <i class="fa-solid fa-gauge-high"></i>
+                        </div>
+                        <div class="alert-text">
+                            <p class="alert-title">임도 구간 과속</p>
+                            <p class="alert-desc">차량 45다6789, 40km/h 초과</p>
+                        </div>
                         <span class="alert-time">12분 전</span>
                     </li>
                 </ul>
-            </section>
+            </div>
         </main>
     </div>
-
-    <!-- AI 챗봇 (다음 단계에서 생성) -->
-    <!-- 
-  AI 챗봇 컴포넌트
-  - 이 코드를 <body> 태그가 끝나기 직전에 추가합니다.
--->
+    
+    <!-- AI 챗봇 컴포넌트 (구조는 동일) -->
     <div class="chatbot-container">
-        <!-- 플로팅 버튼 -->
         <div id="chatbot-fab" class="chatbot-fab">
             <i class="fa-solid fa-robot"></i>
         </div>
-
-        <!-- 채팅창 (초기에는 숨김) -->
         <div id="chat-window" class="chat-window">
-            <!-- 헤더 -->
             <div class="chat-header">
                 <h3>AI 비서</h3>
                 <button id="close-chat-btn" class="close-btn"><i class="fa-solid fa-times"></i></button>
             </div>
-            
-            <!-- 메시지 표시 영역 -->
             <div id="chat-messages" class="chat-messages">
-                <!-- 시연용 초기 메시지 -->
-                <div class="message bot">
-                    <div class="message-content">
-                        안녕하세요! 무엇을 도와드릴까요? <br> (예: 오늘 정산액 알려줘)
-                    </div>
-                </div>
+                <div class="message bot"><div class="message-content">안녕하세요! 무엇을 도와드릴까요?</div></div>
             </div>
-
-            <!-- 사용자 입력 폼 -->
             <form id="chat-input-form" class="chat-input-form">
                 <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
                 <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
@@ -121,7 +145,8 @@
         </div>
     </div>
 
-    <!-- 대시보드 시뮬레이션 스크립트 (다음 단계에서 생성) -->
+    <!-- 스크립트 파일들 -->
     <script src="js/dashboard.js"></script>
+    <script src="js/components.js"></script>
 </body>
 </html>

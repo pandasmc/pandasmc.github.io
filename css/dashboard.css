@@ -1,16 +1,20 @@
-/*
-  대시보드 페이지 전용 스타일시트 (dashboard.css)
-*/
+/* =================================================================
+   대시보드 페이지 전용 스타일시트 (dashboard.css - 재작성 버전)
+   ================================================================= */
 
 body {
-    align-items: flex-start; /* 컨텐츠를 상단부터 정렬 */
-    background-color: var(--background-color);
+    display: flex; /* 자식 요소인 dashboard-wrapper를 정렬하기 위함 */
+    justify-content: center;
+    align-items: flex-start;
 }
 
-.dashboard-container {
+.dashboard-wrapper {
     width: 100%;
-    max-width: 1200px; /* 데스크탑 뷰를 위해 최대 너비 설정 */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
+    gap: 20px;
 }
 
 /* 헤더 */
@@ -18,200 +22,255 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 20px;
+    background-color: var(--surface-color);
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+}
+
+.header .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header .logo .fa-tree {
+    font-size: 24px;
+    color: var(--primary-color);
 }
 
 .header .logo h1 {
-    font-size: 22px;
-    color: var(--primary-color);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .user-profile {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    gap: 15px;
 }
 
-.user-profile span {
-    margin-right: 15px;
-    font-weight: 500;
+.user-profile .user-info {
+    text-align: right;
+}
+
+.user-profile .user-info strong {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.user-profile .user-info span {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.user-profile .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .logout-button {
-    background-color: #eee;
-    color: #555;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    transition: background-color 0.3s;
+    font-size: 20px;
+    color: var(--text-secondary);
+    transition: color 0.2s;
 }
 
 .logout-button:hover {
-    background-color: #ddd;
-}
-
-/* 메인 콘텐츠 */
-.main-content {
-    display: grid;
-    gap: 20px;
-}
-
-/* KPI 섹션 */
-.kpi-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
-}
-
-.kpi-card {
-    background-color: var(--white-color);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.kpi-card h3 {
-    font-size: 14px;
-    color: var(--secondary-color);
-    margin-bottom: 10px;
-}
-
-.kpi-card p {
-    font-size: 28px;
-    font-weight: 700;
     color: var(--primary-color);
 }
 
-.kpi-card p span {
-    font-size: 16px;
-    font-weight: 500;
-    margin-left: 5px;
+
+/* 메인 대시보드 영역 */
+.dashboard-main {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px; /* 좌측, 중앙, 우측 패널 너비 */
+    gap: 20px;
+    width: 100%;
+    flex-grow: 1; /* 남은 공간을 모두 차지하도록 설정 */
+    overflow: hidden; /* 스크롤 방지 */
 }
 
-/* 지도 섹션 */
-.map-section .map-view {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    background-color: #e5e5e5;
+.dashboard-panel {
+    background-color: var(--surface-color);
     border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
 }
 
-.map-background {
+.panel-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.panel-content {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* 좌측 패널: KPI */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.kpi-icon {
+    font-size: 24px;
+}
+
+.kpi-value {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.kpi-value span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-left: 4px;
+}
+
+.kpi-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* 중앙 패널: 지도 */
+.center-panel {
+    padding: 0; /* 지도는 패딩 없이 꽉 채움 */
+}
+
+#map {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    opacity: 0.7;
-}
-
-.vehicle-icon, .alert-icon {
-    position: absolute;
-    font-size: 24px;
-    transform: translate(-50%, -50%);
-    transition: top 0.5s ease-in-out, left 0.5s ease-in-out;
-    text-shadow: 0 0 5px rgba(0,0,0,0.5);
-}
-
-.vehicle-icon {
-    color: #2962ff;
-}
-
-.alert-icon {
-    color: var(--error-color);
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    50% { opacity: 0.5; }
-}
-
-/* 이상 징후 섹션 */
-.alert-section {
-    background-color: var(--white-color);
-    padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.alert-section h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-
-.alert-section h2 .fa-bell {
-    margin-right: 8px;
-    color: var(--primary-color);
+/* 우측 패널: 알림 */
+.badge {
+    background-color: var(--accent-red);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
 }
 
 .alert-list {
-    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .alert-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px 10px;
-    border-bottom: 1px solid #f0f0f0;
+    gap: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.alert-item:last-child {
-    border-bottom: none;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 .alert-item:hover {
-    background-color: #f9f9f9;
+    background-color: var(--background-color);
 }
 
-.alert-type {
-    font-size: 12px;
-    font-weight: 700;
-    padding: 4px 8px;
-    border-radius: 10px;
-    color: var(--white-color);
+.alert-item.active {
+    border-color: var(--secondary-color);
+    background-color: #e7f1ff;
+}
+
+.alert-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
     flex-shrink: 0;
 }
+.alert-icon-wrapper.warning { background-color: var(--accent-orange); }
+.alert-icon-wrapper.critical { background-color: var(--accent-red); }
+.alert-icon-wrapper.info { background-color: var(--secondary-color); }
 
-.alert-type.warning { background-color: #f0ad4e; }
-.alert-type.critical { background-color: var(--error-color); }
-.alert-type.info { background-color: #5bc0de; }
-
-.alert-info {
+.alert-text {
     flex-grow: 1;
-    padding: 0 15px;
+}
+
+.alert-title {
+    font-weight: 600;
     font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.alert-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
 }
 
 .alert-time {
-    font-size: 13px;
-    color: #888;
+    font-size: 12px;
+    color: #adb5bd;
+    align-self: flex-start;
     flex-shrink: 0;
 }
 
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    .dashboard-container {
-        padding: 10px;
+/* 반응형 디자인 */
+@media (max-width: 1200px) {
+    .dashboard-main {
+        grid-template-columns: 1fr; /* 화면이 작아지면 1열로 변경 */
+        overflow-y: auto; /* 스크롤 허용 */
     }
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
+    .center-panel {
+        height: 50vh; /* 지도 높이 고정 */
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-wrapper {
+        padding: 10px;
         gap: 10px;
     }
-    .main-content {
-        grid-template-columns: 1fr;
+    .header {
+        padding: 10px 15px;
     }
-    .alert-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
+    .header .logo h1 {
+        font-size: 16px;
     }
-    .alert-info {
-        padding: 5px 0;
+    .user-profile .user-info {
+        display: none; /* 모바일에서는 이름 숨김 */
+    }
+    .dashboard-main {
+        gap: 10px;
+    }
+    .panel-content {
+        padding: 15px;
     }
 }
