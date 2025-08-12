@@ -3,68 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>통합 관제 대시보드 (Web)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>산림자원 통합관제시스템</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="web_admin.css">
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Header -->
-        <header class="main-header">
-            <h1><i class="fas fa-satellite-dish"></i> 산림자원 AI 통합 관제 시스템</h1>
-            <div class="header-right">
-                <a href="index.html" class="home-button" title="메인으로 돌아가기"><i class="fas fa-home"></i></a>
-                <div id="clock" class="clock"></div>
+        <!-- Global Navigation Bar -->
+        <header class="gnb">
+            <div class="gnb-left">
+                <img src="img/로고.png" alt="로고" class="gnb-logo">
+                <h1>산림자원 통합관제시스템</h1>
+            </div>
+            <div class="gnb-right">
+                <div class="time-display" id="clock"></div>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>산림청 박 주무관</span>
+                </div>
+                <a href="index.html" class="home-button" title="메인으로 돌아가기"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </header>
 
-        <!-- Left Panel -->
-        <aside class="panel left-panel">
+        <!-- Left Sidebar -->
+        <aside class="sidebar left-sidebar">
             <div class="widget">
-                <h2 class="widget-title"><i class="fas fa-chart-pie"></i> 실시간 자원 현황</h2>
-                <div class="chart-container">
-                    <canvas id="statusChart"></canvas>
-                </div>
-                <div class="kpi-grid">
+                <h2 class="widget-title">자산 종합 현황</h2>
+                <div class="kpi-group">
                     <div class="kpi-item">
-                        <span class="kpi-label">총 운행 차량</span>
-                        <span class="kpi-value" id="kpi-total-vehicles">922</span>
+                        <span class="kpi-label">총 등록 자산</span>
+                        <span class="kpi-value" id="kpi-total-vehicles">48 <small>대</small></span>
                     </div>
                     <div class="kpi-item">
-                        <span class="kpi-label">활동 차량</span>
-                        <span class="kpi-value highlight-green" id="kpi-active-vehicles">873</span>
+                        <span class="kpi-label">금일 활동 자산</span>
+                        <span class="kpi-value accent-green" id="kpi-active-vehicles">41 <small>대</small></span>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">금일 위반 의심</span>
+                        <span class="kpi-value accent-red" id="kpi-violations">0 <small>건</small></span>
                     </div>
                 </div>
             </div>
             <div class="widget">
-                <h2 class="widget-title"><i class="fas fa-truck-loading"></i> 지역별 수집량 (톤)</h2>
-                <div class="chart-container">
-                    <canvas id="collectionChart"></canvas>
+                <h2 class="widget-title">주간 수집량 (톤)</h2>
+                <div class="chart-container small-chart">
+                    <canvas id="weekly-collection-chart"></canvas>
                 </div>
+            </div>
+            <div class="widget flex-grow">
+                <h2 class="widget-title">실시간 이벤트 로그</h2>
+                <ul id="event-log" class="event-log">
+                    <!-- Event logs will be injected here -->
+                </ul>
             </div>
         </aside>
 
-        <!-- Main Content (Map) -->
+        <!-- Main Content Area -->
         <main class="main-content">
             <div id="map"></div>
         </main>
 
-        <!-- Right Panel -->
-        <aside id="right-panel-container" class="panel right-panel">
-            <div id="initial-widget" class="widget">
-                <h2 class="widget-title"><i class="fas fa-video"></i> 시나리오 제어</h2>
-                <p class="scenario-desc">AI가 감지한 이상 징후를 분석하고, 원클릭 보고서를 생성하는 과정을 시연합니다.</p>
-                <button id="start-demo-btn" class="demo-button">
-                    <i class="fas fa-play"></i> 이상 징후 시나리오 시작
-                </button>
+        <!-- Right Sidebar -->
+        <aside id="right-sidebar" class="sidebar right-sidebar">
+            <div class="widget">
+                <h2 class="widget-title">누적 탄소 절감량 (tCO₂eq)</h2>
+                <div class="carbon-kpi">
+                    <span id="carbon-value" class="carbon-value">1,284</span>
+                    <span class="carbon-target">/ 2,000 t</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="carbon-progress-bar" class="progress-bar"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>0%</span>
+                    <span id="carbon-percentage">64.2%</span>
+                    <span>100%</span>
+                </div>
             </div>
-            <!-- Dynamic widgets will be injected here -->
+            <div id="chatbot-widget" class="widget flex-grow">
+                 <h2 class="widget-title"><i class="fas fa-robot"></i> AI 분석 챗봇</h2>
+                <div class="chat-container">
+                    <div class="chat-window">
+                        <div class="chat-message bot-message">무엇을 분석해드릴까요?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" placeholder="예: 위험 상태 차량 표시">
+                        <button id="chat-send-btn" class="action-button primary chat-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+             <div id="scenario-widget" class="widget">
+                <h2 class="widget-title"><i class="fas fa-video"></i> 시나리오 제어</h2>
+                <button id="start-alert-demo" class="action-button primary"><i class="fas fa-play"></i> 위반 의심 분석 시작</button>
+            </div>
         </aside>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="web_admin.js"></script>
 </body>

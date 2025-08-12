@@ -1,127 +1,162 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- App State & Global Variables ---
+    let map;
+    let vehicleMarkers = L.markerClusterGroup();
+    let mapLayers = {};
+    const kpiViolations = document.getElementById('kpi-violations');
+    const totalVehicleCount = 48;
+    document.getElementById('kpi-total-vehicles').innerHTML = `${totalVehicleCount} <small>대</small>`;
+    document.getElementById('kpi-active-vehicles').innerHTML = `${Math.floor(totalVehicleCount * 0.9)} <small>대</small>`;
+
+
     // --- Clock ---
     const clockElement = document.getElementById('clock');
     const updateClock = () => {
-        const now = new Date();
-        clockElement.textContent = now.toLocaleTimeString('ko-KR');
+        clockElement.textContent = new Date().toLocaleString('ko-KR');
     };
     setInterval(updateClock, 1000);
     updateClock();
 
     // --- Map Initialization ---
-    const map = L.map('map', { zoomControl: false }).setView([36.5, 127.5], 7);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; CARTO', maxZoom: 20
-    }).addTo(map);
+    const initMap = () => {
+        map = L.map('map', { zoomControl: false }).setView([36.5, 127.5], 7);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; CARTO'
+        }).addTo(map);
+        map.addLayer(vehicleMarkers);
+    };
 
-    // --- Charts Initialization ---
-    const createChart = (ctx, type, data, options = {}) => new Chart(ctx, { type, data, options });
-    const chartOptions = {
-        maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: 'rgba(204, 214, 246, 0.8)' } } },
-        scales: {
-            y: { ticks: { color: 'rgba(204, 214, 246, 0.8)' }, grid: { color: 'rgba(0, 199, 255, 0.1)' } },
-            x: { ticks: { color: 'rgba(204, 214, 246, 0.8)' }, grid: { color: 'rgba(0, 199, 255, 0.1)' } }
+    // --- Chart & KPI Initialization ---
+    new Chart(document.getElementById('weekly-collection-chart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['월', '화', '수', '목', '금', '토', '일'],
+            datasets: [{
+                label: '수집량 (톤)',
+                data: [22, 25, 23, 28, 31, 35, 26],
+                backgroundColor: 'rgba(24, 144, 255, 0.6)',
+                borderColor: 'rgba(24, 144, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+    setTimeout(() => { document.getElementById('carbon-progress-bar').style.width = '64.2%'; }, 500);
+
+    // --- Event Log ---
+    const eventLog = document.getElementById('event-log');
+    const addLog = (icon, message) => {
+        const li = document.createElement('li');
+        li.className = 'log-item';
+        li.innerHTML = `<i class="log-icon ${icon}"></i><span class="log-message">${message}</span>`;
+        eventLog.prepend(li);
+        if (eventLog.children.length > 20) eventLog.lastChild.remove();
+    };
+    
+    // --- Vehicle Simulation ---
+    const forestCoordinates = [
+        [38.12, 128.46], [35.33, 127.73], [37.10, 128.98], [36.85, 128.25],
+        [37.75, 127.92], [36.57, 129.18], [35.40, 127.65], [37.17, 128.88]
+    ];
+    const getRandomForestCoordinate = () => {
+        const base = forestCoordinates[Math.floor(Math.random() * forestCoordinates.length)];
+        return [base[0] + (Math.random() - 0.5) * 0.2, base[1] + (Math.random() - 0.5) * 0.2];
+    };
+    const createVehicleIcon = (status) => {
+        const color = status === 'danger' ? '#f5222d' : status === 'idle' ? '#faad14' : '#52c41a';
+        return L.divIcon({
+            html: `<i class="fas fa-truck" style="color: ${color}; font-size: 18px;"></i>`,
+            className: 'vehicle-marker', iconSize: [20, 20], iconAnchor: [10, 10]
+        });
+    };
+    const generateVehicles = (count) => {
+        for (let i = 0; i < count; i++) {
+            const status = Math.random() > 0.95 ? 'danger' : Math.random() > 0.8 ? 'idle' : 'normal';
+            const marker = L.marker(getRandomForestCoordinate(), { icon: createVehicleIcon(status) });
+            marker.options.vehicleData = { id: 1000 + i, status: status };
+            vehicleMarkers.addLayer(marker);
         }
     };
-    const statusChart = createChart(document.getElementById('statusChart').getContext('2d'), 'doughnut', {
-        labels: ['정상 운행', '정차', '점검 중'],
-        datasets: [{ data: [873, 33, 16], backgroundColor: ['#64ffda', '#00c7ff', '#ff647c'], borderColor: '#0a192f', borderWidth: 3 }]
-    }, { ...chartOptions, cutout: '70%' });
-    const collectionChart = createChart(document.getElementById('collectionChart').getContext('2d'), 'bar', {
-        labels: ['강원', '경기', '충청', '경상', '전라'],
-        datasets: [{ label: '수집량 (톤)', data: [280, 150, 210, 350, 260], backgroundColor: 'rgba(0, 199, 255, 0.5)', borderColor: 'rgba(0, 199, 255, 1)', borderWidth: 1 }]
-    }, chartOptions);
+    
+    // --- Scenario Control ---
+    const clearScenarioLayers = () => {
+        if (mapLayers.violation) {
+            mapLayers.violation.forEach(layer => map.removeLayer(layer));
+            delete mapLayers.violation;
+        }
+    };
 
-    // --- Demo Scenario ---
-    const startDemoBtn = document.getElementById('start-demo-btn');
-    const rightPanel = document.getElementById('right-panel-container');
-    let demoRunning = false;
+    // --- Alert Scenario ---
+    const startAlertScenario = () => {
+        clearScenarioLayers();
+        kpiViolations.textContent = '1 건';
+        addLog('fas fa-exclamation-triangle', '새로운 위반 의심 알림 발생');
 
-    const demoSteps = {
-        start: () => {
-            if (demoRunning) return;
-            demoRunning = true;
-            startDemoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 시나리오 진행 중';
-            startDemoBtn.disabled = true;
-
-            setTimeout(demoSteps.showAlert, 1000);
-        },
-        showAlert: () => {
-            const initialWidget = document.getElementById('initial-widget');
-            if(initialWidget) initialWidget.style.display = 'none';
+        const scenarioWidget = document.getElementById('scenario-widget');
+        scenarioWidget.innerHTML = `
+            <h2 class="widget-title">위반 의심 알림</h2>
+            <ul class="notice-list"><li class="notice-item"><strong>허가 구역 이탈</strong><p>차량 34다5678 / 태백산맥</p></li></ul>`;
+        
+        scenarioWidget.querySelector('.notice-item').addEventListener('click', (e) => {
+            e.currentTarget.classList.add('selected');
+            map.flyTo([37.13, 128.95], 14);
             
-            const alertWidget = document.createElement('div');
-            alertWidget.id = 'alert-widget';
-            alertWidget.className = 'widget';
-            alertWidget.innerHTML = `
-                <h2 class="widget-title"><i class="fas fa-exclamation-triangle"></i> 이상 징후 알림</h2>
-                <ul id="notice-list" class="notice-list">
-                    <li class="notice-item">
-                        <strong>허가 구역 이탈</strong>
-                        <p>차량 12가3456 / 강원 춘천</p>
-                    </li>
-                </ul>`;
-            rightPanel.appendChild(alertWidget);
-            
-            alertWidget.querySelector('.notice-item').addEventListener('click', (e) => {
-                e.currentTarget.classList.add('selected');
-                demoSteps.investigate();
-            });
-        },
-        investigate: () => {
-            const violationAreaCenter = [37.88, 127.73];
-            map.flyTo(violationAreaCenter, 13, { animate: true, duration: 2 });
-
             setTimeout(() => {
-                const permittedArea = L.polygon([[37.90, 127.70], [37.90, 127.76], [37.86, 127.76], [37.86, 127.70]], { color: '#64ffda', fillOpacity: 0.1 });
-                const vehiclePath = L.polyline([[37.88, 127.71], [37.89, 127.72], [37.895, 127.74], [37.89, 127.77]], { color: '#00c7ff' });
-                const violationMarker = L.marker([37.89, 127.77], {
-                    icon: L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', iconSize: [25, 41], iconAnchor: [12, 41] })
-                }).bindPopup('<h3><i class="fas fa-car-crash"></i> 이탈 정보</h3><p><strong>차량:</strong> 12가3456</p><p><strong>상태:</strong> 허가 구역 310m 이탈</p>').openPopup();
-
-                map.addLayer(permittedArea).addLayer(vehiclePath).addLayer(violationMarker);
+                const permittedArea = L.polygon([[37.15, 128.92], [37.15, 128.98], [37.11, 128.98], [37.11, 128.92]], { color: '#52c41a', fillOpacity: 0.1 });
+                const vehiclePath = L.polyline([[37.13, 128.93], [37.14, 128.94], [37.145, 128.96], [37.14, 128.99]], { color: '#1890ff' });
+                const violationMarker = L.marker([37.14, 128.99], { icon: createVehicleIcon('danger') })
+                    .bindPopup('<b>차량 34다5678</b><br>허가 구역 450m 이탈').openPopup();
                 
-                demoSteps.showActionPanel();
+                mapLayers.violation = [permittedArea, vehiclePath, violationMarker];
+                mapLayers.violation.forEach(layer => layer.addTo(map));
             }, 2000);
-        },
-        showActionPanel: () => {
-            const alertWidget = document.getElementById('alert-widget');
-            if(alertWidget) alertWidget.remove();
+        });
+    };
+    document.getElementById('start-alert-demo').addEventListener('click', startAlertScenario);
 
-            const actionWidget = document.createElement('div');
-            actionWidget.id = 'action-widget';
-            actionWidget.className = 'widget';
-            actionWidget.innerHTML = `
-                <h2 class="widget-title"><i class="fas fa-cogs"></i> 상세 정보 및 조치</h2>
-                <p><strong>차량:</strong> 12가3456 (김철수)</p>
-                <p><strong>위치:</strong> 강원도 춘천시 동면</p>
-                <p><strong>상태:</strong> <span style="color:var(--highlight-red)">허가 구역 이탈 (310m)</span></p>
-                <button id="contact-btn" class="action-button contact"><i class="fas fa-phone-alt"></i> 현장 담당자 연락</button>
-                <button id="report-btn" class="action-button"><i class="fas fa-file-alt"></i> 원클릭 보고서 생성</button>
-            `;
-            rightPanel.appendChild(actionWidget);
+    // --- AI Chatbot ---
+    const chatInput = document.querySelector('.chat-input');
+    const chatWindow = document.querySelector('.chat-window');
+    const chatSendBtn = document.getElementById('chat-send-btn');
 
-            actionWidget.querySelector('#report-btn').addEventListener('click', demoSteps.generateReport);
-            actionWidget.querySelector('#contact-btn').addEventListener('click', () => alert('시연: 담당자에게 연락을 시도합니다.'));
-        },
-        generateReport: (e) => {
-            const btn = e.currentTarget;
-            btn.classList.add('loading');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 보고서 생성 중...';
-            btn.disabled = true;
+    const handleChat = () => {
+        const question = chatInput.value;
+        if (!question) return;
 
-            setTimeout(() => {
-                btn.classList.remove('loading');
-                btn.classList.add('success');
-                btn.innerHTML = '<i class="fas fa-check-circle"></i> 생성 완료 (다운로드)';
-                btn.disabled = false;
-                // In a real app, this would trigger a file download.
-                btn.onclick = () => alert('시연: Incident_Report_2025.pdf 파일 다운로드를 시작합니다.');
-            }, 2500);
-        }
+        chatWindow.innerHTML += `<div class="chat-message user-message">${question}</div>`;
+        chatInput.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        setTimeout(() => {
+            chatWindow.innerHTML += `<div class="chat-message bot-message">네, '${question}' 조건으로 지도 데이터를 필터링합니다.</div>`;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            
+            let filterStatus = 'all';
+            if (question.includes('위험') || question.includes('danger')) {
+                filterStatus = 'danger';
+            } else if (question.includes('정차') || question.includes('idle')) {
+                filterStatus = 'idle';
+            }
+
+            vehicleMarkers.eachLayer(marker => {
+                if (filterStatus === 'all' || marker.options.vehicleData.status === filterStatus) {
+                    marker.setOpacity(1);
+                } else {
+                    marker.setOpacity(0.1);
+                }
+            });
+            addLog('fas fa-search', `AI 챗봇이 '${filterStatus}' 상태 차량을 필터링했습니다.`);
+        }, 1500);
     };
 
-    startDemoBtn.addEventListener('click', demoSteps.start);
+    chatSendBtn.addEventListener('click', handleChat);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleChat();
+    });
+
+    // --- Initial Load ---
+    initMap();
+    generateVehicles(totalVehicleCount);
+    addLog('fas fa-check-circle', '시스템이 성공적으로 시작되었습니다.');
 });
