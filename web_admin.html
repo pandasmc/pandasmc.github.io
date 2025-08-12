@@ -78,29 +78,27 @@
                 <div class="progress-bar-container">
                     <div id="carbon-progress-bar" class="progress-bar"></div>
                 </div>
-                <div class="progress-labels">
-                    <span>0%</span>
-                    <span id="carbon-percentage">64.2%</span>
-                    <span>100%</span>
-                </div>
             </div>
-            <div id="chatbot-widget" class="widget flex-grow">
-                 <h2 class="widget-title"><i class="fas fa-robot"></i> AI 분석 챗봇</h2>
-                <div class="chat-container">
-                    <div class="chat-window">
-                        <div class="chat-message bot-message">무엇을 분석해드릴까요?</div>
-                    </div>
-                    <div class="chat-input-area">
-                        <input type="text" class="chat-input" placeholder="예: 위험 상태 차량 표시">
-                        <button id="chat-send-btn" class="action-button primary chat-btn"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-            </div>
-             <div id="scenario-widget" class="widget">
-                <h2 class="widget-title"><i class="fas fa-video"></i> 시나리오 제어</h2>
-                <button id="start-alert-demo" class="action-button primary"><i class="fas fa-play"></i> 위반 의심 분석 시작</button>
+            <div id="dynamic-widget-area" class="widget flex-grow">
+                 <!-- Dynamic widgets will be injected here: Chatbot or Scenario Widgets -->
             </div>
         </aside>
+    </div>
+
+    <!-- Modal for CCTV/Drone Feed -->
+    <div id="feed-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button id="modal-close-btn" class="modal-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <!-- Video tag for drone feed -->
+                <video id="drone-video" loop muted playsinline class="hidden"></video>
+                <!-- Image tag for CCTV feed -->
+                <img id="cctv-image" src="https://placehold.co/600x400/333333/FFFFFF?text=CCTV+Feed" alt="CCTV Feed" class="hidden">
+            </div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
