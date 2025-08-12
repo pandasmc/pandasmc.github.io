@@ -46,11 +46,12 @@ html, body { height: 100%; font-family: var(--font-family); background-color: va
 }
 .scenario-box h3 { font-size: 18px; margin-bottom: 10px; color: var(--primary-color); }
 .scenario-box p { font-size: 14px; color: var(--dark-gray); line-height: 1.6; margin-bottom: 15px; }
-.route-preview, .chat-preview {
-    background-color: var(--light-gray); padding: 10px; border-radius: 8px;
-    font-size: 14px; text-align: center; color: #333; margin-bottom: 15px;
-    border: 1px solid var(--medium-gray);
+
+.option-group select {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--medium-gray);
+    font-size: 16px; background-color: var(--light-gray);
 }
+
 .action-button {
     width: 100%; padding: 12px; font-size: 16px; font-weight: 700;
     background: linear-gradient(45deg, var(--secondary-color), #48bb78);
@@ -60,25 +61,37 @@ html, body { height: 100%; font-family: var(--font-family); background-color: va
 .action-button:hover { transform: translateY(-2px); box-shadow: 0 7px 10px rgba(56, 161, 105, 0.3); }
 .action-button i { margin-right: 8px; }
 
-/* Map & Info Box */
-#routeMap, #forecastMap { height: 250px; width: 100%; border-radius: 10px; background-color: var(--medium-gray); }
+/* Demo Container and Map/Info Box */
+.demo-container { animation: slideInUp 0.6s ease-out; }
+.map-container { height: 250px; width: 100%; border-radius: 10px; background-color: var(--medium-gray); }
 .info-box {
-    background-color: #e6f4ea; border-left: 4px solid var(--secondary-color);
-    padding: 15px; border-radius: 0 8px 8px 0; margin-top: 20px;
-    animation: slideInUp 0.5s ease-out;
+    background-color: white; border-top: 3px solid var(--secondary-color);
+    padding: 15px; border-radius: 0 0 12px 12px; margin-top: -5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-.info-box h4 { margin: 0 0 10px 0; }
-.info-box p { margin: 5px 0; font-size: 14px; }
+.info-box h4 { margin: 0 0 10px 0; color: var(--primary-color); }
+.info-box p { margin: 8px 0; font-size: 14px; }
+.info-box strong { color: #333; }
+.info-box .highlight { color: var(--secondary-color); font-weight: bold; }
 @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 /* AI Chat Styles */
-#aiChatSection { height: 100%; display: flex; flex-direction: column; }
-.chat-window-wrapper { flex-grow: 1; display: flex; flex-direction: column; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; }
+.chat-window-wrapper {
+    height: calc(100% - 170px); /* Adjust based on scenario box height */
+    display: flex; flex-direction: column; background: white; border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;
+    animation: slideInUp 0.6s ease-out;
+}
 .chat-window { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-.chat-message { padding: 12px 18px; border-radius: 20px; max-width: 85%; line-height: 1.5; animation: msg-pop-in 0.3s ease-out; }
+.chat-message { padding: 12px 18px; border-radius: 20px; max-width: 85%; line-height: 1.5; animation: msg-pop-in 0.4s ease-out; }
 @keyframes msg-pop-in { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .user-message { background-color: var(--primary-color); color: white; align-self: flex-end; border-bottom-right-radius: 5px; }
 .bot-message { background-color: var(--medium-gray); color: #2d3748; align-self: flex-start; border-bottom-left-radius: 5px; }
+.bot-message.source-info {
+    font-size: 12px; background-color: transparent; color: #718096;
+    padding: 5px 18px; border-left: 2px solid var(--medium-gray);
+    border-radius: 0; animation: fadeIn 0.5s;
+}
 .bot-message.typing span {
     display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #909090;
     margin: 0 1px; animation: typing-bounce 1s infinite;

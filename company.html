@@ -36,37 +36,43 @@
             <!-- Route Planner Section -->
             <section id="routePlannerSection" class="tab-content active">
                 <div class="scenario-box">
-                    <h3>시나리오: 경로 비교</h3>
-                    <p>춘천에서 2곳의 경유지를 거쳐 당진으로 가는 '일반 경로'와 'AI 추천 최적 경로'의 효율성을 비교합니다.</p>
-                    <div class="route-preview">
-                        <span>춘천</span> <i class="fas fa-arrow-right"></i> <span>원주</span> <i class="fas fa-arrow-right"></i> <span>대전</span> <i class="fas fa-arrow-right"></i> <span>당진</span>
-                    </div>
-                    <button id="findRouteBtn" class="action-button"><i class="fas fa-play-circle"></i> 경로 비교 시연</button>
+                    <h3>시나리오 1: AI 경로 최적화</h3>
+                    <p>AI가 실시간 교통정보와 임도 데이터를 분석하여 '일반 경로' 대비 얼마나 효율적인 '최적 경로'를 추천하는지 비교 시연합니다.</p>
+                    <button id="findRouteBtn" class="action-button"><i class="fas fa-play-circle"></i> 경로 비교 시연 시작</button>
                 </div>
-                <div id="routeMap"></div>
-                <div id="routeInfo" class="info-box hidden"></div>
+                <div id="route-demo-container" class="demo-container hidden">
+                    <div id="routeMap" class="map-container"></div>
+                    <div id="routeInfo" class="info-box hidden"></div>
+                </div>
             </section>
 
             <!-- AI Forecast Section -->
             <section id="forecastSection" class="tab-content">
                 <div class="scenario-box">
-                    <h3>시나리오: AI 수급 예측</h3>
-                    <p>AI 모델이 강원도 지역의 다음 분기 '미이용 산림 바이오매스' 발생 예측량을 분석한 결과를 시각화합니다.</p>
+                    <h3>시나리오 2: AI 수급 예측</h3>
+                    <p>AI 모델이 강원도 지역의 바이오매스 발생량을 예측합니다. 예측할 분기를 선택해주세요.</p>
+                    <div class="option-group">
+                        <select id="forecast-quarter">
+                            <option value="q3">2025년 3분기 (피해목 중심)</option>
+                            <option value="q4">2025년 4분기 (숲가꾸기 중심)</option>
+                        </select>
+                    </div>
                     <button id="runForecastBtn" class="action-button"><i class="fas fa-play-circle"></i> 예측 결과 보기</button>
                 </div>
-                <div id="forecastMap"></div>
-                <div id="forecastInfo" class="info-box hidden"></div>
+                <div id="forecast-demo-container" class="demo-container hidden">
+                    <div id="forecastMap" class="map-container"></div>
+                    <div id="forecastInfo" class="info-box hidden"></div>
+                </div>
             </section>
 
             <!-- AI Chat Section -->
             <section id="aiChatSection" class="tab-content">
                  <div class="scenario-box">
-                    <h3>시나리오: AI 비서</h3>
-                    <p>운송 중 복잡한 질문에 대해 AI 비서가 실시간 데이터와 정책을 통합하여 답변하는 과정을 시연합니다.</p>
-                    <div class="chat-preview">"현재 화물 정산액이랑, 새로 바뀐 조례 괜찮은지 알려줘"</div>
+                    <h3>시나리오 3: RAG 기반 AI 비서</h3>
+                    <p>운송 중 복잡한 질문에 대해 AI 비서가 실시간 데이터와 정책 DB를 통합하여 답변하는 과정을 시연합니다.</p>
                     <button id="startChatBtn" class="action-button"><i class="fas fa-play-circle"></i> 대화 시연 시작</button>
                 </div>
-                <div class="chat-window-wrapper hidden">
+                <div id="chat-demo-container" class="chat-window-wrapper hidden">
                     <div class="chat-window"></div>
                 </div>
             </section>

@@ -1,95 +1,123 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let routeMap, forecastMap; // Declare map variables
 
-    // --- Tab Switching Logic ---
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            button.classList.add('active');
-            const targetId = button.getAttribute('data-target');
-            document.getElementById(targetId).classList.add('active');
-            
-            // Initialize map only when tab is activated
-            if (targetId === 'routePlannerSection' && !routeMap) initRouteMap();
-            if (targetId === 'forecastSection' && !forecastMap) initForecastMap();
-        });
-    });
+    // --- App State & DOM Elements ---
+    const app = {
+        maps: {
+            route: null,
+            forecast: null
+        },
+        elements: {
+            tabs: document.querySelectorAll('.tab-button'),
+            contents: document.querySelectorAll('.tab-content'),
+            // Demo 1: Route Planner
+            findRouteBtn: document.getElementById('findRouteBtn'),
+            routeDemoContainer: document.getElementById('route-demo-container'),
+            routeInfo: document.getElementById('routeInfo'),
+            // Demo 2: Forecast
+            runForecastBtn: document.getElementById('runForecastBtn'),
+            forecastDemoContainer: document.getElementById('forecast-demo-container'),
+            forecastInfo: document.getElementById('forecastInfo'),
+            forecastQuarterSelect: document.getElementById('forecast-quarter'),
+            // Demo 3: Chat
+            startChatBtn: document.getElementById('startChatBtn'),
+            chatDemoContainer: document.getElementById('chat-demo-container'),
+            chatWindow: document.querySelector('#chat-demo-container .chat-window')
+        }
+    };
 
-    // --- Helper function to initialize maps ---
+    // --- Generic Map Initializer ---
     const initMap = (containerId, view, zoom) => {
-        const map = L.map(containerId).setView(view, zoom);
+        const map = L.map(containerId, { zoomControl: false }).setView(view, zoom);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(map);
         return map;
     };
 
-    const initRouteMap = () => routeMap = initMap('routeMap', [36.7, 127.2], 8);
-    const initForecastMap = () => forecastMap = initMap('forecastMap', [37.8, 128.2], 8);
-    
-    // Initialize the first tab's map
-    initRouteMap();
+    // --- Clear Layers Helper ---
+    const clearMapLayers = (map) => {
+        map.eachLayer(layer => {
+            if (!layer.options.attribution) { // Keep the base tile layer
+                map.removeLayer(layer);
+            }
+        });
+    };
 
-    // --- Route Planner Logic ---
-    document.getElementById('findRouteBtn').addEventListener('click', () => {
-        routeMap.eachLayer(layer => { if (!!layer.toGeoJSON) routeMap.removeLayer(layer); });
+    // --- Tab Switching Logic ---
+    app.elements.tabs.forEach(button => {
+        button.addEventListener('click', () => {
+            app.elements.tabs.forEach(btn => btn.classList.remove('active'));
+            app.elements.contents.forEach(content => content.classList.remove('active'));
 
-        const start = { lat: 37.8813, lng: 127.7298, name: '출발: 춘천' };
-        const wp1 = { lat: 37.3423, lng: 127.9202, name: '경유1: 원주' };
-        const wp2 = { lat: 36.3504, lng: 127.3845, name: '경유2: 대전' };
-        const end = { lat: 36.9914, lng: 126.6995, name: '도착: 당진' };
-        
-        const aiRoute = [[start.lat, start.lng], [wp1.lat, wp1.lng], [36.8, 127.1], [wp2.lat, wp2.lng], [end.lat, end.lng]];
-        const normalRoute = [[start.lat, start.lng], [37.5, 127.8], [wp1.lat, wp1.lng], [wp2.lat, wp2.lng], [36.8, 126.8], [end.lat, end.lng]];
+            button.classList.add('active');
+            const targetId = button.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
 
-        L.polyline(aiRoute, { color: '#2c5282', weight: 7, opacity: 0.9, dashArray: '10, 5' }).addTo(routeMap).bindPopup('<b>AI 추천 최적 경로</b>');
-        L.polyline(normalRoute, { color: '#a0aec0', weight: 4 }).addTo(routeMap).bindPopup('일반 경로');
+    // --- Demo 1: Route Optimization ---
+    const runRouteDemo = () => {
+        app.elements.routeDemoContainer.classList.remove('hidden');
         
-        [start, wp1, wp2, end].forEach(p => L.marker([p.lat, p.lng]).addTo(routeMap).bindPopup(p.name));
-        routeMap.fitBounds(L.polyline(aiRoute).getBounds(), { padding: [30, 30] });
+        if (!app.maps.route) {
+            app.maps.route = initMap('routeMap', [36.7, 127.2], 8);
+        }
+        clearMapLayers(app.maps.route);
+        app.maps.route.invalidateSize(); // Recalculate map size
+
+        const start = { lat: 37.88, lng: 127.73, name: '춘천' };
+        const end = { lat: 36.99, lng: 126.69, name: '당진' };
+        const aiRoute = [[37.88, 127.73], [37.34, 127.92], [36.8, 127.1], [36.99, 126.69]];
+        const normalRoute = [[37.88, 127.73], [37.5, 127.8], [37.34, 127.92], [36.35, 127.38], [36.99, 126.69]];
+
+        L.polyline(aiRoute, { color: '#2c5282', weight: 7, opacity: 0.9 }).addTo(app.maps.route).bindPopup('<b>AI 추천 최적 경로</b>');
+        L.polyline(normalRoute, { color: '#a0aec0', weight: 5, dashArray: '10, 10' }).addTo(app.maps.route).bindPopup('일반 경로');
         
-        const routeInfo = document.getElementById('routeInfo');
-        routeInfo.innerHTML = `
+        L.marker([start.lat, start.lng]).addTo(app.maps.route).bindPopup(start.name);
+        L.marker([end.lat, end.lng]).addTo(app.maps.route).bindPopup(end.name);
+        
+        app.maps.route.fitBounds(L.polyline(normalRoute).getBounds(), { padding: [40, 40] });
+        
+        app.elements.routeInfo.innerHTML = `
             <h4><i class="fas fa-chart-line"></i> 경로 비교 결과</h4>
-            <p><strong>AI 추천 경로:</strong> 4시간 21분 / 285km</p>
+            <p><strong>AI 추천 경로:</strong> <span class="highlight">4시간 21분 / 285km</span></p>
             <p><strong>일반 경로:</strong> 4시간 56분 / 302km</p>
-            <p><strong><i class="fas fa-check-circle" style="color:green;"></i> 효과:</strong> 35분 단축, 유류비 12% 절감 예상</p>
+            <p><i class="fas fa-info-circle"></i> AI는 실시간 교통정보와 포장/비포장 임도 데이터를 분석하여 최적 경로를 추천합니다.</p>
         `;
-        routeInfo.classList.remove('hidden');
-    });
+        app.elements.routeInfo.classList.remove('hidden');
+    };
 
-    // --- AI Forecast Logic ---
-    document.getElementById('runForecastBtn').addEventListener('click', () => {
-        const heatData = [
-            [37.75, 128.87, 0.9], [37.53, 128.62, 0.7], [38.05, 128.40, 0.5],
-            [37.9, 127.7, 0.4], [37.4, 128.2, 0.6], [37.6, 128.0, 0.8]
-        ];
-        L.heatLayer(heatData, { radius: 35, blur: 25, maxZoom: 12 }).addTo(forecastMap);
+    // --- Demo 2: AI Supply/Demand Forecast ---
+    const runForecastDemo = () => {
+        app.elements.forecastDemoContainer.classList.remove('hidden');
+
+        if (!app.maps.forecast) {
+            app.maps.forecast = initMap('forecastMap', [37.8, 128.2], 8);
+        }
+        clearMapLayers(app.maps.forecast);
+        app.maps.forecast.invalidateSize();
+
+        const selectedQuarter = app.elements.forecastQuarterSelect.value;
+        const heatData = selectedQuarter === 'q3' 
+            ? [[37.75, 128.87, 0.9], [37.53, 128.62, 0.7], [38.05, 128.40, 0.5]]
+            : [[37.9, 127.7, 0.8], [37.4, 128.2, 0.6], [37.6, 128.0, 0.9]];
         
-        const forecastInfo = document.getElementById('forecastInfo');
-        forecastInfo.innerHTML = `
-            <h4><i class="fas fa-fire"></i> 강원도 바이오매스 발생 예측</h4>
-            <p>붉은색 지역일수록 발생 예측량이 높습니다.</p>
-            <p><strong>주요 발생원:</strong> 재선충병 피해목, 숲가꾸기</p>
+        L.heatLayer(heatData, { radius: 40, blur: 30, maxZoom: 12, gradient: {0.4: 'blue', 0.65: 'lime', 1: 'red'} }).addTo(app.maps.forecast);
+        
+        app.elements.forecastInfo.innerHTML = `
+            <h4><i class="fas fa-fire"></i> ${selectedQuarter === 'q3' ? '3분기' : '4분기'} 바이오매스 발생 예측</h4>
+            <p><strong>분석 지역:</strong> 강원도</p>
+            <p><strong>주요 발생원:</strong> ${selectedQuarter === 'q3' ? '재선충병 피해목' : '숲가꾸기 사업'}</p>
+            <p class="highlight"><strong>결론:</strong> ${selectedQuarter === 'q3' ? '영동' : '영서'} 지역 중심의 수집 계획 필요</p>
         `;
-        forecastInfo.classList.remove('hidden');
-        document.getElementById('runForecastBtn').disabled = true;
-        document.getElementById('runForecastBtn').innerText = '예측 결과 표시 완료';
-    });
+        app.elements.forecastInfo.classList.remove('hidden');
+    };
 
-    // --- AI Chat Logic ---
-    document.getElementById('startChatBtn').addEventListener('click', (e) => {
-        e.target.closest('.scenario-box').style.display = 'none';
-        const chatWrapper = document.querySelector('.chat-window-wrapper');
-        chatWrapper.classList.remove('hidden');
-        runChatScenario();
-    });
+    // --- Demo 3: AI Assistant ---
+    const runChatDemo = () => {
+        app.elements.chatDemoContainer.classList.remove('hidden');
+        app.elements.chatWindow.innerHTML = ''; // Clear previous chat
 
-    const runChatScenario = () => {
-        const chatWindow = document.querySelector('.chat-window');
         const addMessage = (text, type, delay = 0) => {
             return new Promise(resolve => {
                 setTimeout(() => {
@@ -98,10 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (type === 'bot-typing') {
                         msg.innerHTML = `<span></span><span></span><span></span>`;
                     } else {
-                        msg.textContent = text;
+                        msg.innerHTML = text;
                     }
-                    chatWindow.appendChild(msg);
-                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                    app.elements.chatWindow.appendChild(msg);
+                    app.elements.chatWindow.scrollTop = app.elements.chatWindow.scrollHeight;
                     resolve(msg);
                 }, delay);
             });
@@ -112,13 +140,25 @@ document.addEventListener('DOMContentLoaded', () => {
         async function sequence() {
             await addMessage(userQuestion, 'user');
             const typing = await addMessage('', 'bot-typing', 500);
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 1500));
             typing.remove();
-            await addMessage("네, 김 대표님. 요청하신 내용을 분석하여 답변드립니다.", 'bot');
-            await addMessage("먼저, 현재 운송 건의 예상 정산액은 다음과 같습니다.\n- 품목: 미이용 바이오매스\n- 중량: 42.5톤\n- 예상 정산액: 1,380,000원 (REC 가중치 1.5 적용)", 'bot', 1500);
-            await addMessage("다음으로, 강원도 개정 조례(2025-07-01 시행)와 현재 운송 경로의 저촉 여부를 확인했습니다. 다행히 저촉되는 구간은 없습니다.", 'bot', 2000);
+
+            await addMessage("네, 김 대표님. 요청하신 내용을 분석합니다.", 'bot');
+            await addMessage("<i class='fas fa-database'></i> 실시간 운송 DB 조회 중...", 'bot-source-info', 1000);
+            await addMessage("<strong>예상 정산액:</strong> 1,380,000원 (REC 가중치 1.5 적용)", 'bot', 1500);
+            await addMessage("<i class='fas fa-book'></i> 강원도 개정 조례 DB 확인 중...", 'bot-source-info', 1000);
+            await addMessage("<strong>조례 저촉 여부:</strong> 특이사항 없음. 현재 운송 경로는 개정 조례에 저촉되지 않습니다.", 'bot', 2000);
             await addMessage("안전 운행하세요!", 'bot', 1000);
         }
         sequence();
     };
+
+    // --- Event Listeners ---
+    app.elements.findRouteBtn.addEventListener('click', runRouteDemo);
+    app.elements.runForecastBtn.addEventListener('click', runForecastDemo);
+    app.elements.startChatBtn.addEventListener('click', (e) => {
+        e.target.closest('.scenario-box').classList.add('hidden');
+        runChatDemo();
+    });
+
 });
