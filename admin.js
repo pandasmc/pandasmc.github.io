@@ -1,99 +1,94 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- DOM Elements & Global State ---
-    const kpiPanel = document.getElementById('kpi-panel');
-    const scenarioPanel = document.getElementById('scenario-panel');
-    const startDemoBtn = document.getElementById('start-demo-btn');
-    let map; // To be initialized later
-    let demoInterval; // For KPI updates
+    const bottomSheet = document.getElementById('bottom-sheet');
+    const panelContent = document.getElementById('panel-content');
+    let map;
 
     // --- Map Initialization ---
     const initMap = () => {
-        map = L.map('map').setView([36.5, 127.5], 7);
+        map = L.map('map', { zoomControl: false }).setView([36.5, 127.5], 7);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            attribution: '&copy; CARTO'
         }).addTo(map);
     };
 
-    // --- KPI Dashboard Logic ---
-    const updateKpi = () => {
-        const volumeEl = document.getElementById('kpi-volume');
-        const vehiclesEl = document.getElementById('kpi-vehicles');
-        
-        let currentVolume = 1254 + Math.floor(Math.random() * 10);
-        let currentVehicles = 82 + (Math.random() > 0.5 ? 1 : -1);
-        if (currentVehicles < 80) currentVehicles = 80;
-
-        volumeEl.textContent = `${currentVolume.toLocaleString()} 톤`;
-        vehiclesEl.textContent = `${currentVehicles} 대`;
+    // --- Panel Content Templates ---
+    const templates = {
+        initial: `
+            <div class="widget">
+                <div class="kpi-grid">
+                    <div><span class="kpi-label">금일 수집량</span><span class="kpi-value">1,254 톤</span></div>
+                    <div><span class="kpi-label">운행 차량</span><span class="kpi-value">82 대</span></div>
+                    <div><span class="kpi-label">평균 함수율</span><span class="kpi-value">45.8 %</span></div>
+                </div>
+                <hr style="border:none; border-top:1px solid #e2e8f0; margin: 20px 0;">
+                <h2 class="widget-title"><i class="fas fa-video"></i> 시나리오</h2>
+                <p class="scenario-desc">AI가 감지한 이상 징후를 분석하고, 원클릭 보고서를 생성하는 과정을 시연합니다.</p>
+                <button id="start-demo-btn" class="action-button start"><i class="fas fa-play-circle"></i> 시연 시작</button>
+            </div>`,
+        alert: `
+            <div class="widget">
+                <h2 class="widget-title"><i class="fas fa-exclamation-triangle" style="color:var(--warning-color);"></i> 이상 징후 발생</h2>
+                <div id="alert-item" class="alert-item">
+                    <strong>허가 구역 이탈</strong>
+                    <p>차량 12가3456 (운전자: 김철수)</p>
+                </div>
+            </div>`,
+        action: `
+            <div class="widget">
+                <h2 class="widget-title"><i class="fas fa-cogs" style="color:var(--success-color);"></i> 상세 정보 및 조치</h2>
+                <p><strong>차량:</strong> 12가3456 (김철수)</p>
+                <p><strong>상태:</strong> <span style="color:var(--danger-color); font-weight:bold;">허가 구역 이탈 (310m)</span></p>
+                <button id="contact-btn" class="action-button contact"><i class="fas fa-phone-alt"></i> 현장 담당자 연락</button>
+                <button id="report-btn" class="action-button report"><i class="fas fa-file-alt"></i> 원클릭 보고서 생성</button>
+            </div>`
     };
 
-    // --- Demo Scenario Functions ---
+    // --- Panel Control ---
+    const updatePanel = (content) => {
+        panelContent.innerHTML = content;
+        // Re-add event listeners for new content
+        const startBtn = document.getElementById('start-demo-btn');
+        if (startBtn) startBtn.addEventListener('click', demoSteps.start);
+        
+        const alertItem = document.getElementById('alert-item');
+        if (alertItem) alertItem.addEventListener('click', demoSteps.investigate);
+
+        const reportBtn = document.getElementById('report-btn');
+        if (reportBtn) reportBtn.addEventListener('click', demoSteps.generateReport);
+        
+        const contactBtn = document.getElementById('contact-btn');
+        if (contactBtn) contactBtn.addEventListener('click', () => alert('시연: 담당자에게 연락을 시도합니다.'));
+    };
+
+    // --- Demo Scenario Steps ---
     const demoSteps = {
         start: () => {
-            scenarioPanel.classList.remove('show');
-            if (demoInterval) clearInterval(demoInterval); // Stop previous interval if any
-            setTimeout(demoSteps.showAlert, 600);
+            const btn = document.getElementById('start-demo-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 시나리오 진행 중...';
+            btn.disabled = true;
+            setTimeout(() => updatePanel(templates.alert), 1500);
         },
-
-        showAlert: () => {
-            const alertPanel = createPanel('alert-panel', 'right-panel', `
-                <div class="panel-header"><i class="fas fa-exclamation-triangle"></i><h2>이상 징후 발생</h2></div>
-                <div class="panel-content">
-                    <div id="alert-item" class="alert-item">
-                        <strong>[주의] 허가 구역 이탈</strong>
-                        <p>차량 12가3456 (운전자: 김철수)</p>
-                    </div>
-                </div>`);
-            document.getElementById('alert-item').addEventListener('click', demoSteps.investigate);
-        },
-
         investigate: () => {
-            hideAndRemovePanel('alert-panel');
+            bottomSheet.classList.add('partial-hide'); // Partially hide panel
             
             const violationAreaCenter = [35.237, 128.686];
             map.flyTo(violationAreaCenter, 14, { animate: true, duration: 2.5 });
 
             setTimeout(() => {
-                const permittedAreaCoords = [[35.240, 128.680], [35.242, 128.695], [35.235, 128.698], [35.230, 128.685]];
-                const vehiclePathCoords = [[35.238, 128.682], [35.239, 128.688], [35.236, 128.692], [35.233, 128.699]];
-                const violationPoint = vehiclePathCoords[vehiclePathCoords.length - 1];
+                const permittedArea = L.polygon([[35.240, 128.680], [35.242, 128.695], [35.235, 128.698], [35.230, 128.685]], { color: 'green', fillOpacity: 0.2 });
+                const vehiclePath = L.polyline([[35.238, 128.682], [35.239, 128.688], [35.236, 128.692], [35.233, 128.699]], { color: 'blue' });
+                const violationMarker = L.marker([35.233, 128.699], {
+                    icon: L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', iconSize: [25, 41], iconAnchor: [12, 41] })
+                }).bindPopup('<div class="custom-popup"><h3><i class="fas fa-car-crash"></i> 이탈 정보</h3><p><strong>차량:</strong> 12가3456</p><p class="danger-text"><strong>상태:</strong> 허가 구역 310m 이탈</p></div>').openPopup();
 
-                L.polygon(permittedAreaCoords, { color: 'green', fillColor: '#00ff00', fillOpacity: 0.2 }).addTo(map);
-                L.polyline(vehiclePathCoords, { color: 'blue' }).addTo(map);
-
-                const violationIcon = L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-                });
+                map.addLayer(permittedArea).addLayer(vehiclePath).addLayer(violationMarker);
                 
-                const popupContent = `
-                    <div class="custom-popup">
-                        <h3><i class="fas fa-car-crash"></i> 이탈 정보</h3>
-                        <p><strong>차량:</strong> 12가3456</p>
-                        <p><strong>운전자:</strong> 김철수</p>
-                        <p><strong>이탈 시간:</strong> 16분 전</p>
-                        <p class="danger-text"><strong>상태:</strong> 허가 구역 경계 250m 이탈</p>
-                    </div>`;
-
-                L.marker(violationPoint, { icon: violationIcon }).addTo(map).bindPopup(popupContent).openPopup();
-                
-                setTimeout(demoSteps.showActions, 2000);
+                updatePanel(templates.action);
+                bottomSheet.classList.remove('partial-hide');
             }, 2500);
         },
-
-        showActions: () => {
-            const actionPanel = createPanel('action-panel', 'right-panel', `
-                <div class="panel-header"><i class="fas fa-cogs"></i><h2>후속 조치</h2></div>
-                <div class="panel-content">
-                    <p>이상 징후가 확인되었습니다. 다음 조치를 실행할 수 있습니다.</p>
-                    <button id="contact-btn"><i class="fas fa-phone-alt"></i> 현장 담당자에게 연락</button>
-                    <button id="report-btn"><i class="fas fa-file-alt"></i> 원클릭 보고서 생성</button>
-                </div>`);
-            document.getElementById('report-btn').addEventListener('click', demoSteps.generateReport);
-            document.getElementById('contact-btn').addEventListener('click', () => alert('시연: 담당자에게 연락을 시도합니다.'));
-        },
-
         generateReport: () => {
             const btn = document.getElementById('report-btn');
             btn.classList.add('loading');
@@ -102,44 +97,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             setTimeout(() => {
                 btn.classList.remove('loading');
-                btn.style.backgroundColor = 'var(--success-color)';
-                btn.innerHTML = '<i class="fas fa-check-circle"></i> 생성 완료 (Incident_Report_2025.pdf)';
-                
-                const actionPanel = document.getElementById('action-panel');
-                const successMsg = document.createElement('p');
-                successMsg.style.cssText = 'color: var(--success-color); font-weight: bold; text-align: center; margin-top: 10px;';
-                successMsg.textContent = '보고서가 성공적으로 생성되었습니다.';
-                actionPanel.querySelector('.panel-content').appendChild(successMsg);
+                btn.classList.add('success');
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> 생성 완료 (다운로드)';
+                btn.disabled = false;
+                btn.onclick = () => alert('시연: Incident_Report_2025.pdf 파일 다운로드를 시작합니다.');
             }, 2500);
-        }
-    };
-
-    // --- Helper Functions for Panels ---
-    const createPanel = (id, positionClass, innerHTML) => {
-        const panel = document.createElement('div');
-        panel.id = id;
-        panel.className = `panel ${positionClass}`;
-        panel.innerHTML = innerHTML;
-        document.body.appendChild(panel);
-        setTimeout(() => panel.classList.add('show'), 100);
-        return panel;
-    };
-
-    const hideAndRemovePanel = (id) => {
-        const panel = document.getElementById(id);
-        if (panel) {
-            panel.classList.remove('show');
-            setTimeout(() => panel.remove(), 700);
         }
     };
 
     // --- Initial Setup ---
     const initialize = () => {
         initMap();
-        kpiPanel.classList.add('show');
-        scenarioPanel.classList.add('show');
-        demoInterval = setInterval(updateKpi, 2000);
-        startDemoBtn.addEventListener('click', demoSteps.start);
+        updatePanel(templates.initial);
+        setTimeout(() => bottomSheet.classList.add('show'), 500);
     };
 
     initialize();

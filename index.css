@@ -2,6 +2,7 @@
 :root {
     --primary-color: #2c5282; /* Deep Blue */
     --secondary-color: #38a169; /* Green */
+    --web-dashboard-color: #c53030; /* Red for web dashboard */
     --background-color: #f0f4f8;
     --text-dark: #2d3748;
     --text-light: #718096;
@@ -47,93 +48,42 @@ body {
 }
 
 @keyframes fadeInScaleUp {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 /* Logo icon styling */
-.logo-icon {
-    font-size: 52px;
-    color: var(--secondary-color);
-    margin-bottom: 20px;
-    transform: rotate(-15deg);
-}
+.logo-icon { font-size: 52px; color: var(--secondary-color); margin-bottom: 20px; transform: rotate(-15deg); }
+.title { font-size: 26px; font-weight: 700; color: var(--text-dark); margin-bottom: 15px; }
+.subtitle { font-size: 16px; color: var(--text-light); margin-bottom: 30px; line-height: 1.6; }
+.guide-text { font-size: 14px; color: var(--text-light); margin-bottom: 10px; margin-top: 10px; }
 
-/* Title styling */
-.title {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: 15px;
-}
-
-/* Subtitle styling */
-.subtitle {
-    font-size: 16px;
-    color: var(--text-light);
-    margin-bottom: 40px;
-    line-height: 1.6;
-}
-
-.guide-text {
-    font-size: 14px;
-    color: var(--text-light);
-    margin-bottom: 15px;
+.divider {
+    border: none;
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 25px 0 15px 0;
 }
 
 /* Button container */
-.button-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+.button-container { display: flex; flex-direction: column; gap: 15px; }
 
 /* Common button styling */
 .role-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 20px;
-    font-size: 18px;
-    font-weight: 500;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px 20px; font-size: 18px; font-weight: 500;
+    border: none; border-radius: 12px; cursor: pointer;
+    transition: all 0.3s ease; color: white; width: 100%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-.role-button i {
-    margin-right: 12px;
-    width: 20px;
-}
+.role-button i { margin-right: 12px; width: 20px; }
 
 /* Specific button styling */
-#adminBtn {
-    background-color: var(--primary-color);
-}
+#adminBtn { background-color: var(--primary-color); }
+#adminBtn:hover { background-color: #2b6cb0; transform: translateY(-3px); box-shadow: 0 7px 14px rgba(49, 130, 206, 0.3); }
 
-#adminBtn:hover {
-    background-color: #2b6cb0;
-    transform: translateY(-3px);
-    box-shadow: 0 7px 14px rgba(49, 130, 206, 0.3);
-}
+#companyBtn { background-color: var(--secondary-color); }
+#companyBtn:hover { background-color: #2f855a; transform: translateY(-3px); box-shadow: 0 7px 14px rgba(56, 161, 105, 0.3); }
 
-#companyBtn {
-    background-color: var(--secondary-color);
-}
-
-#companyBtn:hover {
-    background-color: #2f855a;
-    transform: translateY(-3px);
-    box-shadow: 0 7px 14px rgba(56, 161, 105, 0.3);
-}
-
+.web-button { background-color: var(--web-dashboard-color); }
+.web-button:hover { background-color: #9b2c2c; transform: translateY(-3px); box-shadow: 0 7px 14px rgba(197, 48, 48, 0.3); }

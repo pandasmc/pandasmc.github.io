@@ -1,19 +1,17 @@
 // Wait for the DOM to be fully loaded before running the script
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Get references to the two role selection buttons
+    // Get references to the role selection buttons
     const adminButton = document.getElementById('adminBtn');
     const companyButton = document.getElementById('companyBtn');
+    const webAdminButton = document.getElementById('webAdminBtn');
 
     // Function to handle page transition
     const goToPage = (url) => {
-        // Add a class to the body to trigger a fade-out animation
         document.body.classList.add('fade-out');
-        
-        // Wait for the animation to complete before changing the page
         setTimeout(() => {
             window.location.href = url;
-        }, 500); // This duration should match the CSS animation duration
+        }, 500);
     };
 
     // Add a new style element for the fade-out animation
@@ -29,22 +27,25 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
-
-    // Check if the buttons exist to prevent errors
+    // Add event listeners
     if (adminButton) {
-        // Add a click event listener to the 'Admin' button
         adminButton.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
+            e.preventDefault();
             goToPage('admin.html');
         });
     }
 
     if (companyButton) {
-        // Add a click event listener to the 'Company' button
         companyButton.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
+            e.preventDefault();
             goToPage('company.html');
         });
     }
 
+    if (webAdminButton) {
+        webAdminButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToPage('web_admin.html');
+        });
+    }
 });
