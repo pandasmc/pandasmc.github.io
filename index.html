@@ -3,345 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>진경바이오텍 - AI 폐자원 수거 플랫폼</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Leaflet.js (지도 라이브러리) CDN -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    
-    <!-- Chart.js (차트 라이브러리) CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Lucide Icons (아이콘 라이브러리) -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <style>
-        /* 기본 폰트 및 스크롤바 스타일 */
-        body {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            background-color: #f1f5f9; /* bg-slate-100 */
-        }
-        body::-webkit-scrollbar { display: none; }
-
-        /* 지도 컨테이너 스타일 */
-        #map, #routes-map {
-            height: 100%;
-            width: 100%;
-            border-radius: 0.75rem; /* rounded-xl */
-        }
-
-        /* 카드 호버 효과 */
-        .interactive-card {
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        .interactive-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
-
-        /* 페이지 전환을 위한 클래스 */
-        .page-content { display: none; }
-        .page-content.active { display: block; animation: fadeIn 0.5s; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 사이드바 전환 효과 */
-        #sidebar { transition: transform 0.3s ease-in-out; }
-        @media (max-width: 768px) {
-            #sidebar.hidden-mobile { transform: translateX(-100%); }
-        }
-        
-        /* 활성 네비게이션 링크 스타일 */
-        .nav-link.active {
-            background-color: #1E40AF; /* bg-blue-800 */
-            color: white;
-            font-weight: 600;
-        }
-        /* 모바일 하단 네비게이션 활성 스타일 */
-        #mobile-nav .nav-link.active {
-            background-color: transparent;
-            color: #60A5FA; /* text-blue-400 */
-        }
-    </style>
+    <title>로그인 - 산림자원 AI 통합 관리 플랫폼</title>
+    <!-- 공통 스타일시트 -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 로그인 페이지 전용 스타일시트 -->
+    <link rel="stylesheet" href="css/login.css">
 </head>
-<body class="antialiased">
-    <!-- 로딩 스피너 -->
-    <div id="loader" class="fixed inset-0 bg-white flex justify-center items-center z-[100]">
-        <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-600"></div>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <!-- 로고 이미지 (추후 images/logo.png로 교체) -->
+            <div class="logo">
+                <h1>산림자원 AI 플랫폼</h1>
+            </div>
+            <p class="subtitle">데이터 기반의 통합 관리 솔루션</p>
+            
+            <form id="login-form" class="login-form">
+                <div class="input-group">
+                    <label for="userId">아이디</label>
+                    <input type="text" id="userId" name="userId" placeholder="admin 또는 driver 입력" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" name="password" value="1234">
+                </div>
+                <p id="error-message" class="error-message"></p>
+                <button type="submit" class="login-button">로그인</button>
+            </form>
+        </div>
+        <footer class="footer">
+            &copy; 2025 Jinkyung Biotech Inc.
+        </footer>
     </div>
 
-    <div class="flex">
-        <!-- 사이드바 -->
-        <aside id="sidebar" class="w-64 bg-slate-900 text-slate-300 flex-col p-4 fixed h-full shadow-2xl z-40 hidden-mobile md:flex">
-            <div class="flex items-center mb-10">
-                <i data-lucide="dna" class="w-10 h-10 mr-3 text-blue-400"></i>
-                <h1 class="text-2xl font-bold text-white">진경바이오텍</h1>
-            </div>
-            <nav id="sidebar-nav" class="flex-grow">
-                <ul>
-                    <li class="mb-3"><a href="#" data-target="dashboard" class="nav-link flex items-center py-2.5 px-4 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>대시보드</a></li>
-                    <li class="mb-3"><a href="#" data-target="routes" class="nav-link flex items-center py-2.5 px-4 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="map-pinned" class="w-5 h-5 mr-3"></i>수거 경로</a></li>
-                    <li class="mb-3"><a href="#" data-target="analytics" class="nav-link flex items-center py-2.5 px-4 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-3"></i>생산 분석</a></li>
-                    <li class="mb-3"><a href="#" data-target="farms" class="nav-link flex items-center py-2.5 px-4 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="users" class="w-5 h-5 mr-3"></i>농가 관리</a></li>
-                    <li class="mb-3"><a href="#" data-target="settings" class="nav-link flex items-center py-2.5 px-4 rounded-lg hover:bg-slate-700 transition-colors"><i data-lucide="settings" class="w-5 h-5 mr-3"></i>설정</a></li>
-                </ul>
-            </nav>
-            <div class="mt-auto">
-                <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-lg text-center">
-                    <i data-lucide="truck" class="w-12 h-12 mx-auto text-blue-400"></i>
-                    <p class="mt-2 text-sm text-slate-400">실시간 수거 현황</p>
-                    <button class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg w-full transition-colors">상세 보기</button>
-                </div>
-            </div>
-        </aside>
-        
-        <!-- 모바일 메뉴 토글 시 배경 -->
-        <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
-
-        <!-- 메인 콘텐츠 -->
-        <main class="flex-1 p-4 md:p-8 md:ml-64 mb-16 md:mb-0">
-            <!-- 모바일 헤더 -->
-            <header class="md:hidden flex justify-between items-center mb-6">
-                <button id="mobile-menu-btn" class="p-2 -ml-2">
-                    <i data-lucide="menu" class="w-6 h-6 text-slate-800"></i>
-                </button>
-                <div class="flex items-center">
-                    <i data-lucide="dna" class="w-7 h-7 mr-2 text-blue-600"></i>
-                    <h1 class="text-xl font-bold text-slate-800">진경바이오텍</h1>
-                </div>
-                <div class="w-6">
-                    <img src="https://placehold.co/40x40/DBEAFE/1E3A8A?text=H" alt="User Avatar" class="w-8 h-8 rounded-full">
-                </div>
-            </header>
-
-            <!-- 대시보드 페이지 -->
-            <div id="dashboard-page" class="page-content">
-                <header class="hidden md:flex justify-between items-center mb-8">
-                    <div>
-                        <h2 class="text-3xl font-bold text-slate-800">AI 수거 통합 플랫폼</h2>
-                        <p id="last-updated" class="text-sm text-slate-500">마지막 업데이트: </p>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="relative"><i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i><input type="text" placeholder="검색..." class="pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"></div>
-                        <button class="p-2 rounded-full hover:bg-slate-200 transition-colors"><i data-lucide="bell" class="text-slate-600"></i></button>
-                        <div class="flex items-center space-x-2"><img src="https://placehold.co/40x40/DBEAFE/1E3A8A?text=H" alt="User Avatar" class="w-10 h-10 rounded-full"><div><p class="font-semibold text-slate-700">황진경</p><p class="text-sm text-slate-500">대표</p></div></div>
-                    </div>
-                </header>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <div class="bg-white p-5 rounded-xl shadow-lg flex items-center interactive-card"><div class="p-3 rounded-full bg-blue-100 mr-4"><i data-lucide="package" class="w-8 h-8 text-blue-600"></i></div><div><p class="text-sm text-slate-500">총 수거량 (톤)</p><p class="text-2xl font-bold text-slate-800">875</p></div></div>
-                    <div class="bg-white p-5 rounded-xl shadow-lg flex items-center interactive-card"><div class="p-3 rounded-full bg-green-100 mr-4"><i data-lucide="flame" class="w-8 h-8 text-green-600"></i></div><div><p class="text-sm text-slate-500">펠릿 생산량 (톤)</p><p class="text-2xl font-bold text-slate-800">230</p></div></div>
-                    <div class="bg-white p-5 rounded-xl shadow-lg flex items-center interactive-card"><div class="p-3 rounded-full bg-amber-100 mr-4"><i data-lucide="truck" class="w-8 h-8 text-amber-600"></i></div><div><p class="text-sm text-slate-500">운행 차량</p><p class="text-2xl font-bold text-slate-800">12 / 15</p></div></div>
-                    <div class="bg-white p-5 rounded-xl shadow-lg flex items-center interactive-card"><div class="p-3 rounded-full bg-rose-100 mr-4"><i data-lucide="leaf" class="w-8 h-8 text-rose-600"></i></div><div><p class="text-sm text-slate-500">탄소 절감량 (tCO2)</p><p class="text-2xl font-bold text-slate-800">96</p></div></div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-white p-4 rounded-xl shadow-lg h-[50vh] md:h-[500px]"><div id="map"></div></div>
-                    <div class="bg-white p-6 rounded-xl shadow-lg"><h3 class="text-xl font-bold text-slate-800 mb-4">실시간 수거 경로</h3><div class="space-y-4"><div class="border p-4 rounded-lg interactive-card cursor-pointer hover:border-blue-500"><div class="flex justify-between items-center"><p class="font-bold text-slate-700">경남 서부권</p><span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded-full">진행 중</span></div><p class="text-sm text-slate-500 mt-1">담당: 김철수 (12가 3456)</p><div class="w-full bg-slate-200 rounded-full h-2.5 mt-2"><div class="bg-blue-500 h-2.5 rounded-full" style="width: 75%"></div></div><p class="text-right text-sm text-slate-500 mt-1">7/10 농가 완료</p></div><div class="border p-4 rounded-lg interactive-card cursor-pointer hover:border-blue-500"><div class="flex justify-between items-center"><p class="font-bold text-slate-700">경남 동부권</p><span class="text-xs font-semibold bg-sky-100 text-sky-800 px-2 py-1 rounded-full">대기 중</span></div><p class="text-sm text-slate-500 mt-1">담당: 박영희 (34나 5678)</p><div class="w-full bg-slate-200 rounded-full h-2.5 mt-2"><div class="bg-sky-500 h-2.5 rounded-full" style="width: 10%"></div></div><p class="text-right text-sm text-slate-500 mt-1">1/12 농가 완료</p></div><div class="border p-4 rounded-lg interactive-card cursor-pointer hover:border-blue-500"><div class="flex justify-between items-center"><p class="font-bold text-slate-700">전남권</p><span class="text-xs font-semibold bg-slate-200 text-slate-800 px-2 py-1 rounded-full">완료</span></div><p class="text-sm text-slate-500 mt-1">담당: 이민준 (56다 7890)</p><div class="w-full bg-slate-200 rounded-full h-2.5 mt-2"><div class="bg-slate-400 h-2.5 rounded-full" style="width: 100%"></div></div><p class="text-right text-sm text-slate-500 mt-1">8/8 농가 완료</p></div></div></div>
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg"><h3 class="text-xl font-bold text-slate-800 mb-4">주요 생산량 추이 (단위: 톤)</h3><div class="h-80"><canvas id="productionYieldChart"></canvas></div></div>
-                    <div class="bg-white p-6 rounded-xl shadow-lg"><h3 class="text-xl font-bold text-slate-800 mb-4">펠릿 재고 현황 (단위: 톤)</h3><div class="h-80"><canvas id="pelletStatesChart"></canvas></div></div>
-                </div>
-            </div>
-            <!-- 수거 경로 페이지 --><div id="routes-page" class="page-content"><h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-6">수거 경로 관리</h2><div class="bg-white p-2 md:p-4 rounded-xl shadow-lg h-[70vh]"><div id="routes-map"></div></div></div>
-            <!-- 생산 분석 페이지 --><div id="analytics-page" class="page-content"><h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-6">생산 분석</h2><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><div class="bg-white p-6 rounded-xl shadow-lg"><h3 class="text-xl font-bold text-slate-800 mb-4">월별 탄소 절감량 (tCO2)</h3><div class="h-80"><canvas id="carbonReductionChart"></canvas></div></div><div class="bg-white p-6 rounded-xl shadow-lg"><h3 class="text-xl font-bold text-slate-800 mb-4">펠릿 종류별 판매 현황</h3><div class="h-80"><canvas id="pelletSalesChart"></canvas></div></div></div></div>
-            <!-- 농가 관리 페이지 --><div id="farms-page" class="page-content"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl md:text-3xl font-bold text-slate-800">농가 관리</h2><button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center transition-colors text-sm md:text-base"><i data-lucide="plus" class="w-5 h-5 mr-2"></i>신규 등록</button></div><div id="farm-list" class="space-y-4"></div></div>
-            <!-- 설정 페이지 --><div id="settings-page" class="page-content"><h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-6">설정</h2><div class="bg-white p-6 rounded-xl shadow-lg max-w-2xl"><h3 class="text-xl font-bold text-slate-800 mb-6">프로필 설정</h3><div class="space-y-4"><div><label class="block text-sm font-medium text-slate-700">이름</label><input type="text" value="황진경" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div><div><label class="block text-sm font-medium text-slate-700">이메일</label><input type="email" value="d4avidh@naver.com" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></div><button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">저장</button></div></div></div>
-        </main>
-    </div>
-
-    <!-- 모바일 하단 네비게이션 -->
-    <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-400 flex justify-around p-1 z-50 border-t border-slate-700 shadow-t-lg">
-        <a href="#" data-target="dashboard" class="nav-link flex-1 flex flex-col items-center justify-center text-center p-1 rounded-md transition-colors"><i data-lucide="layout-dashboard" class="w-6 h-6 mb-1"></i><span class="text-xs font-medium">대시보드</span></a>
-        <a href="#" data-target="routes" class="nav-link flex-1 flex flex-col items-center justify-center text-center p-1 rounded-md transition-colors"><i data-lucide="map-pinned" class="w-6 h-6 mb-1"></i><span class="text-xs font-medium">경로</span></a>
-        <a href="#" data-target="analytics" class="nav-link flex-1 flex flex-col items-center justify-center text-center p-1 rounded-md transition-colors"><i data-lucide="bar-chart-3" class="w-6 h-6 mb-1"></i><span class="text-xs font-medium">분석</span></a>
-        <a href="#" data-target="farms" class="nav-link flex-1 flex flex-col items-center justify-center text-center p-1 rounded-md transition-colors"><i data-lucide="users" class="w-6 h-6 mb-1"></i><span class="text-xs font-medium">농가</span></a>
-        <a href="#" data-target="settings" class="nav-link flex-1 flex flex-col items-center justify-center text-center p-1 rounded-md transition-colors"><i data-lucide="settings" class="w-6 h-6 mb-1"></i><span class="text-xs font-medium">설정</span></a>
-    </nav>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- 초기화 및 요소 선택 ---
-            const sidebar = document.getElementById('sidebar');
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-            const allNavLinks = document.querySelectorAll('.nav-link');
-            const pages = document.querySelectorAll('.page-content');
-            const loader = document.getElementById('loader');
-            let maps = {};
-            let charts = {};
-
-            // --- 이벤트 리스너 ---
-            mobileMenuBtn.addEventListener('click', () => {
-                sidebar.classList.remove('hidden-mobile');
-                sidebarBackdrop.classList.remove('hidden');
-            });
-
-            sidebarBackdrop.addEventListener('click', () => {
-                sidebar.classList.add('hidden-mobile');
-                sidebarBackdrop.classList.add('hidden');
-            });
-
-            allNavLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('data-target');
-                    handleNavigation(targetId);
-                    if (window.innerWidth < 768) {
-                        sidebar.classList.add('hidden-mobile');
-                        sidebarBackdrop.classList.add('hidden');
-                    }
-                });
-            });
-
-            // --- 함수 ---
-            function handleNavigation(targetId) {
-                pages.forEach(page => page.classList.remove('active'));
-                const targetPage = document.getElementById(`${targetId}-page`);
-                if(targetPage) targetPage.classList.add('active');
-                
-                updateNavStyles(targetId);
-
-                switch (targetId) {
-                    case 'dashboard':
-                        if (maps['map']) setTimeout(() => maps['map'].map.invalidateSize(), 10);
-                        break;
-                    case 'routes':
-                        if (maps['routes-map']) setTimeout(() => maps['routes-map'].map.invalidateSize(), 10);
-                        else initMap('routes-map');
-                        break;
-                    case 'analytics':
-                        initAnalyticsCharts();
-                        break;
-                    case 'farms':
-                        renderFarmList();
-                        break;
-                }
-            }
-
-            function updateNavStyles(activeTarget) {
-                allNavLinks.forEach(nav => {
-                    nav.classList.toggle('active', nav.getAttribute('data-target') === activeTarget);
-                });
-            }
-
-            function initMap(containerId) {
-                if (maps[containerId]) return;
-
-                const map = L.map(containerId, { zoomControl: false }).setView([35.25, 128.0], 9);
-                L.control.zoom({ position: 'bottomright' }).addTo(map);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                    subdomains: 'abcd',
-                    maxZoom: 20
-                }).addTo(map);
-                
-                maps[containerId] = { map, isSetup: false };
-                if (!maps[containerId].isSetup) {
-                    setupMapFeatures(map);
-                    maps[containerId].isSetup = true;
-                }
-            }
-            
-            function setupMapFeatures(mapInstance) {
-                const farmIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#16A34A" width="32px" height="32px"><path d="M21.6,8.2C21.6,8.2,21.6,8.2,21.6,8.2c-0.2-1.9-1.1-3.7-2.6-5.2C17.6,1.6,15.8,0.7,13.8,0.4c-0.1,0-0.2,0-0.3,0 c-0.5,0-1,0-1.5,0.1C9.4,0.7,7,2.2,5.4,4.6C3.9,7,3.9,9.9,5.4,12.3c0,0,0,0,0,0l0,0c1.1,1.8,2.8,3,4.8,3.5V19c0,1.1,0.9,2,2,2h0 c1.1,0,2-0.9,2-2v-3.5c2-0.5,3.7-1.7,4.8-3.5l0,0C20.5,10.6,21.2,9.4,21.6,8.2z"/></svg>`;
-                const truckIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 40" fill="#2563EB" width="40px" height="40px"><path d="M62,28.8H50.2v-5h4.4V19h-4.4v-5h10.6c1.1,0,2-0.9,2-2s-0.9-2-2-2H48.8V5c0-1.1-0.9-2-2-2H2.2C1,3,0,3.9,0,5v23.8 C0,29.9,0.9,31,2,31h6.4c0.8,4.5,4.6,8,9.4,8s8.6-3.5,9.4-8h13.1c0.8,4.5,4.6,8,9.4,8s8.6-3.5,9.4-8H62c1.1,0,2-0.9,2-2 S63.1,28.8,62,28.8z M21.8,35c-2.2,0-4-1.8-4-4s1.8-4,4-4s4,1.8,4,4S24,35,21.8,35z M49.8,35c-2.2,0-4-1.8-4-4s1.8-4,4-4s4,1.8,4,4 S52,35,49.8,35z M4,28.8V5h40.8v23.8H4z"/></svg>`;
-                const farmIcon = L.icon({ iconUrl: `data:image/svg+xml;base64,${btoa(farmIconSVG)}`, iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32] });
-                const truckIcon = L.icon({ iconUrl: `data:image/svg+xml;base64,${btoa(truckIconSVG)}`, iconSize: [40, 40], iconAnchor: [20, 20], popupAnchor: [0, -20] });
-                const farms = [
-                    { name: "사천 곤명 농가", lat: 35.088, lng: 128.085, contact: "010-1234-5678", last_pickup: "2025-07-01", status: "정상" },
-                    { name: "진주 수곡 농가", lat: 35.192, lng: 128.013, contact: "010-2345-6789", last_pickup: "2025-06-28", status: "정상" },
-                    { name: "하동 옥종 농가", lat: 35.153, lng: 127.931, contact: "010-3456-7890", last_pickup: "2025-07-02", status: "확인필요" },
-                    { name: "산청 단성 농가", lat: 35.263, lng: 128.061, contact: "010-4567-8901", last_pickup: "2025-07-03", status: "정상" },
-                    { name: "함양 유림 농가", lat: 35.438, lng: 127.876, contact: "010-5678-9012", last_pickup: "2025-06-30", status: "정상" }
-                ];
-                const routeLatLngs = farms.map(farm => [farm.lat, farm.lng]);
-                farms.forEach(farm => L.marker([farm.lat, farm.lng], { icon: farmIcon }).addTo(mapInstance).bindPopup(`<b>${farm.name}</b>`));
-                L.polyline(routeLatLngs, { color: '#2563EB', weight: 5, opacity: 0.7, dashArray: '10, 5' }).addTo(mapInstance);
-                L.marker(routeLatLngs[0], { icon: truckIcon }).addTo(mapInstance).bindPopup('<b>수거 차량</b>');
-                mapInstance.fitBounds(L.polyline(routeLatLngs).getBounds().pad(0.1));
-            }
-            
-            function renderFarmList() {
-                const farmListContainer = document.getElementById('farm-list');
-                if (!farmListContainer || farmListContainer.children.length > 0) return;
-
-                const farmsData = [
-                    { name: "사천 곤명 농가", region: "경남 사천시", contact: "010-1234-5678", last_pickup: "2025-07-01", status: "정상", status_color: "green" },
-                    { name: "진주 수곡 농가", region: "경남 진주시", contact: "010-2345-6789", last_pickup: "2025-06-28", status: "정상", status_color: "green" },
-                    { name: "하동 옥종 농가", region: "경남 하동군", contact: "010-3456-7890", last_pickup: "2025-07-02", status: "확인필요", status_color: "amber" },
-                ];
-
-                farmsData.forEach(farm => {
-                    const statusColor = farm.status_color === 'green' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800';
-                    const cardHTML = `
-                        <div class="bg-white p-4 rounded-lg shadow-md border-l-4 border-blue-500">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <p class="font-bold text-slate-800">${farm.name}</p>
-                                    <p class="text-sm text-slate-500">${farm.region}</p>
-                                </div>
-                                <span class="text-xs font-medium px-2 py-1 rounded-full ${statusColor}">${farm.status}</span>
-                            </div>
-                            <div class="mt-4 flex justify-between text-sm text-slate-600">
-                                <span><i data-lucide="phone" class="inline-block w-4 h-4 mr-1"></i>${farm.contact}</span>
-                                <span><i data-lucide="calendar" class="inline-block w-4 h-4 mr-1"></i>${farm.last_pickup}</span>
-                            </div>
-                        </div>
-                    `;
-                    farmListContainer.innerHTML += cardHTML;
-                });
-                lucide.createIcons();
-            }
-
-            function createChart(ctx, config) {
-                const chartId = ctx.canvas.id;
-                if (charts[chartId]) { charts[chartId].destroy(); }
-                charts[chartId] = new Chart(ctx, config);
-            }
-
-            function initDashboardCharts() {
-                const productionCtx = document.getElementById('productionYieldChart').getContext('2d');
-                const gradient = productionCtx.createLinearGradient(0, 0, 0, 300);
-                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
-                gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
-                createChart(productionCtx, { type: 'line', data: { labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월'], datasets: [{ label: '폐배지 수거량', data: [120, 150, 180, 160, 210, 250, 230], borderColor: '#2563EB', backgroundColor: gradient, fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } } });
-                
-                const pelletCtx = document.getElementById('pelletStatesChart').getContext('2d');
-                createChart(pelletCtx, { type: 'bar', data: { labels: ['산업용', '가정용', '반려동물용', '미가공'], datasets: [{ label: '재고 현황 (톤)', data: [120, 45, 30, 80], backgroundColor: ['#1E40AF', '#2563EB', '#3B82F6', '#60A5FA'], borderRadius: 5 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } } });
-            }
-
-            function initAnalyticsCharts() {
-                const carbonCtx = document.getElementById('carbonReductionChart').getContext('2d');
-                createChart(carbonCtx, { type: 'bar', data: { labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월'], datasets: [{ label: '탄소 절감량', data: [15, 18, 22, 20, 25, 30, 28], backgroundColor: '#1E40AF', borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-
-                const salesCtx = document.getElementById('pelletSalesChart').getContext('2d');
-                createChart(salesCtx, { type: 'pie', data: { labels: ['산업용', '가정용', '반려동물용'], datasets: [{ data: [350, 120, 80], backgroundColor: ['#1E40AF', '#2563EB', '#60A5FA'] }] }, options: { responsive: true, maintainAspectRatio: false } });
-            }
-
-            // --- 초기 페이지 로드 ---
-            lucide.createIcons();
-            document.getElementById('last-updated').textContent = `마지막 업데이트: ${new Date().toLocaleString('ko-KR')}`;
-            
-            initMap('map');
-            initDashboardCharts();
-            handleNavigation('dashboard');
-            
-            setTimeout(() => {
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 300);
-            }, 500);
-        });
-    </script>
+    <!-- 로그인 시뮬레이션 스크립트 (다음 단계에서 생성) -->
+    <script src="js/auth.js"></script>
 </body>
 </html>
